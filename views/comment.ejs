@@ -1,0 +1,24 @@
+<%- include("partials/header.ejs") %>
+
+<div class="container">
+  <h1>Leave a Comment</h1>
+
+  <% if(locals.EditIndex >= 0){ %>
+    <form action="/submit" method="POST">
+      <input name="name" type="text" class="feedback-input"  placeholder="Name" value="<%= names[EditIndex]%>" />
+      <textarea name="text" class="feedback-input" placeholder="Comment"><%= contentTexts[EditIndex]%></textarea>
+      <input type="submit" class="btn btn-primary" value="Update" />
+      <input type="hidden" name="index" value="<%= EditIndex %>">
+    </form>
+
+  <% }else{%>
+    <form action="/submit" method="POST">
+      <input name="name" type="text" class="feedback-input" placeholder="Name" />
+      <textarea name="text" class="feedback-input" placeholder="Comment"></textarea>
+      <input type="submit" class="btn btn-primary" value="SUBMIT" />
+    </form>
+  <%}%>
+
+
+</div>
+
