@@ -39,7 +39,7 @@ app.post("/submit", (req,res)=>{
         data.names[index] = req.body["name"];
         data.contentTexts[index] = req.body["text"];
     }
-    res.render("index.ejs",data);
+    res.redirect("/");
 })
 
 app.post("/comment", (req,res)=>{
