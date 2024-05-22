@@ -25,7 +25,9 @@ main {
 h1 {
   text-align: center;
 }
-
+h4 {
+  text-align: left;
+}
 p {
   color: grey;
   text-align:left;
