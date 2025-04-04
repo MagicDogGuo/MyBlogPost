@@ -74,7 +74,14 @@ const LandingPage = () => {
               © 2025 Sam's Blog. All rights reserved.
             </Typography>
             <Box sx={{ display: 'flex', gap: 2 }}>
-              <Typography variant="body2">Contact Us</Typography>
+                <Typography
+                    variant="body2"
+                    component="a"
+                    href="mailto:z0935323866@gmail.com"
+                    sx={{ textDecoration: 'underline', cursor: 'pointer' }}
+                >
+                    Contact Us
+                </Typography>
             </Box>
           </Box>
         </Container>
