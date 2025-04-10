@@ -4,6 +4,7 @@ import PostList from './PostList';
 import PostForm from './PostForm';
 import axios from 'axios';
 import './Posts.css';
+import { Link } from 'react-router-dom';
 
 function Posts() {
   const [posts, setPosts] = useState([]);
@@ -63,9 +64,11 @@ function Posts() {
       <div className="posts-content">
         <Container maxWidth="md">
           <Box sx={{ my: 4 }}>
-            <Typography variant="h3" component="h1" gutterBottom>
-              Blog Posts
-            </Typography>
+            <Link to="/" className="hover-text">
+              <Typography variant="h3" component="h1" gutterBottom  >
+                Blog Posts
+              </Typography>
+            </Link>
             <Button
               variant="contained"
               color="primary"

@@ -27,3 +27,13 @@
     padding: 1rem;
   }
 } 
+
+.hover-text {
+  cursor: pointer;
+  transition: color 0.3s ease;
+  text-decoration: none;
+}
+
+.hover-text:hover {
+  color: #1976d2; 
+}
