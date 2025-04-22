@@ -6,6 +6,7 @@ import LandingPage from './components/LandingPage';
 import Posts from './components/Posts';
 import Login from './components/Login';
 import Register from './components/Register';
+import Donation from './components/Donation';
 
 // 受保護的路由組件
 const ProtectedRoute = ({ children }) => {
@@ -39,6 +40,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Posts />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/donate"
+              element={
+                <ProtectedRoute>
+                  <Donation />
                 </ProtectedRoute>
               }
             />
