@@ -20,7 +20,7 @@ const Layout = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%', margin: 0, padding: 0 }}>
       <AppBar position="static">
         <Toolbar>
           <Typography
@@ -55,9 +55,9 @@ const Layout = () => {
         </Toolbar>
       </AppBar>
 
-      <Container component="main" sx={{ flexGrow: 1, py: 4 }}>
+      <Box component="main" sx={{ flexGrow: 1, width: '100%', margin: 0, padding: 0 }}>
         <Outlet />
-      </Container>
+      </Box>
 
       <Box
         component="footer"
@@ -65,6 +65,7 @@ const Layout = () => {
           py: 3,
           px: 2,
           mt: 'auto',
+          width: '100%',
           backgroundColor: (theme) => theme.palette.grey[200]
         }}
       >

@@ -97,39 +97,41 @@ function Posts() {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          部落格文章
-        </Typography>
-        {isAdmin && (
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
-            onClick={() => setOpenDialog(true)}
-          >
-            新增文章
-          </Button>
-        )}
-      </Box>
-      <PostList
-        posts={posts}
-        onDelete={handleDeletePost}
-        onEdit={handleEditPost}
-      />
-      {isAdmin && (
-        <PostForm
-          open={openDialog}
-          onClose={() => {
-            setOpenDialog(false);
-            setEditingPost(null);
-          }}
-          onSubmit={editingPost ? handleUpdatePost : handleCreatePost}
-          initialData={editingPost}
+    <div className="posts-container">
+      <div className="posts-content">
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+          <Typography variant="h4" component="h1" gutterBottom sx={{ color: 'black', margin: 0 }}>
+            部落格文章
+          </Typography>
+          {isAdmin && (
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon />}
+              onClick={() => setOpenDialog(true)}
+            >
+              新增文章
+            </Button>
+          )}
+        </Box>
+        <PostList
+          posts={posts}
+          onDelete={handleDeletePost}
+          onEdit={handleEditPost}
         />
-      )}
-    </Container>
+        {isAdmin && (
+          <PostForm
+            open={openDialog}
+            onClose={() => {
+              setOpenDialog(false);
+              setEditingPost(null);
+            }}
+            onSubmit={editingPost ? handleUpdatePost : handleCreatePost}
+            initialData={editingPost}
+          />
+        )}
+      </div>
+    </div>
   );
 }
 
