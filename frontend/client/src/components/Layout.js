@@ -29,7 +29,7 @@ const Layout = () => {
             sx={{ flexGrow: 1, cursor: 'pointer' }}
             onClick={() => navigate('/')}
           >
-            我的部落格
+            Sam's Blog
           </Typography>
           <Box sx={{ display: 'flex', gap: 2 }}>
             {user ? (
@@ -71,7 +71,7 @@ const Layout = () => {
       >
         <Container maxWidth="sm">
           <Typography variant="body1" color="text.secondary" align="center">
-            © {new Date().getFullYear()} 我的部落格. All rights reserved.
+            © {new Date().getFullYear()} Sam's Blog. All rights reserved.
           </Typography>
         </Container>
       </Box>

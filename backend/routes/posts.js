@@ -24,7 +24,7 @@ const authMiddleware = async (req, res, next) => {
 router.get('/', async (req, res) => {
   try {
     const posts = await Post.find()
-      .populate('author', 'name email')
+      .populate('author', 'username email role')
       .sort({ createdAt: -1 });
     res.json(posts);
   } catch (error) {
@@ -36,7 +36,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const post = await Post.findById(req.params.id)
-      .populate('author', 'name email');
+      .populate('author', 'username email role');
     if (!post) {
       return res.status(404).json({ message: '文章不存在' });
     }
@@ -57,7 +57,7 @@ router.post('/', auth, isAdmin, async (req, res) => {
       tags: tags || []
     });
     await post.save();
-    await post.populate('author', 'name email');
+    await post.populate('author', 'username email role');
     res.status(201).json(post);
   } catch (error) {
     res.status(500).json({ message: '創建文章失敗', error: error.message });
@@ -79,7 +79,7 @@ router.put('/:id', auth, isAdmin, async (req, res) => {
     if (tags) post.tags = tags;
     await post.save();
     
-    await post.populate('author', 'name email');
+    await post.populate('author', 'username email role');
     res.json(post);
   } catch (error) {
     res.status(500).json({ message: '更新文章失敗', error: error.message });
@@ -120,6 +120,7 @@ router.post('/:id/like', auth, async (req, res) => {
     }
     
     await post.save();
+    await post.populate('author', 'username email role');
     res.json(post);
   } catch (error) {
     res.status(500).json({ message: '操作失敗', error: error.message });
@@ -139,10 +140,11 @@ router.post('/:id/comments', auth, async (req, res) => {
     post.comments.push({
       user: req.user.userId,
       content,
-      authorName: req.user.name
+      authorUsername: req.user.username
     });
     
     await post.save();
+    await post.populate('author', 'username email role');
     res.json(post);
   } catch (error) {
     res.status(500).json({ message: '添加評論失敗', error: error.message });
@@ -170,6 +172,7 @@ router.delete('/:postId/comments/:commentId', auth, async (req, res) => {
     
     comment.remove();
     await post.save();
+    await post.populate('author', 'username email role');
     res.json(post);
   } catch (error) {
     res.status(500).json({ message: '刪除評論失敗', error: error.message });

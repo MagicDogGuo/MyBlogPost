@@ -40,7 +40,7 @@ const PostList = ({ posts, onDelete, onEdit }) => {
                   {post.title}
                 </Typography>
                 <Typography color="textSecondary" gutterBottom>
-                  作者: {post.author?.name || '未知作者'}
+                  作者: {post.author?.username || '未知作者'}
                 </Typography>
                 <Typography variant="body1" component="p" sx={{ 
                   mb: 2,

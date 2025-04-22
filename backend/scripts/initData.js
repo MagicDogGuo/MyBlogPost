@@ -6,10 +6,22 @@ const Post = require('../models/Post');
 
 // 預設管理員用戶
 const defaultAdmin = {
-  name: 'admin',
+  username: 'admin',
   email: 'admin@example.com',
   password: 'admin123',
-  role: 'admin'
+  role: 'admin',
+  donateuser: 'yes',
+  createdAt: new Date()
+};
+
+// 預設一般用戶
+const defaultUser = {
+  username: 'user',
+  email: 'user@example.com',
+  password: 'user123',
+  role: 'user',
+  donateuser: 'no',
+  createdAt: new Date()
 };
 
 // 預設文章
@@ -40,16 +52,44 @@ async function initData() {
     if (!existingAdmin) {
       // 創建管理員用戶
       adminUser = new User({
-        name: defaultAdmin.name,
+        username: defaultAdmin.username,
         email: defaultAdmin.email,
         password: defaultAdmin.password,
-        role: defaultAdmin.role
+        role: defaultAdmin.role,
+        donateuser: defaultAdmin.donateuser,
+        createdAt: defaultAdmin.createdAt
       });
       await adminUser.save();
-      console.log('Created admin user');
+      console.log('Created admin user:', {
+        id: adminUser._id,
+        username: adminUser.username,
+        role: adminUser.role,
+        donateuser: adminUser.donateuser
+      });
     } else {
       adminUser = existingAdmin;
       console.log('Found existing admin user');
+    }
+
+    // 檢查是否已有一般用戶
+    const existingUser = await User.findOne({ email: defaultUser.email });
+    if (!existingUser) {
+      // 創建一般用戶
+      const normalUser = new User({
+        username: defaultUser.username,
+        email: defaultUser.email,
+        password: defaultUser.password,
+        role: defaultUser.role,
+        donateuser: defaultUser.donateuser,
+        createdAt: defaultUser.createdAt
+      });
+      await normalUser.save();
+      console.log('Created normal user:', {
+        id: normalUser._id,
+        username: normalUser.username,
+        role: normalUser.role,
+        donateuser: normalUser.donateuser
+      });
     }
 
     // 刪除所有現有文章並重新創建
@@ -60,7 +100,9 @@ async function initData() {
     for (const postData of defaultPosts) {
       const post = new Post({
         ...postData,
-        author: adminUser._id
+        author: adminUser._id,
+        createdAt: new Date(),
+        updatedAt: new Date()
       });
       await post.save();
       
@@ -70,7 +112,7 @@ async function initData() {
         id: savedPost._id,
         title: savedPost.title,
         authorId: savedPost.author._id,
-        authorName: savedPost.author.name
+        authorUsername: savedPost.author.username
       });
     }
 
@@ -80,7 +122,7 @@ async function initData() {
       id: post._id,
       title: post.title,
       authorId: post.author._id,
-      authorName: post.author.name
+      authorUsername: post.author.username
     })));
 
     console.log('Initialization completed successfully');

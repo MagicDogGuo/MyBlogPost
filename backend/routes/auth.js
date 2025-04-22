@@ -48,9 +48,10 @@ router.post('/login', async (req, res) => {
       token,
       user: {
         id: user._id,
-        name: user.name,
+        username: user.username,
         email: user.email,
-        role: user.role
+        role: user.role,
+        donateuser: user.donateuser
       }
     });
   } catch (error) {
@@ -64,10 +65,10 @@ router.post('/register', async (req, res) => {
   try {
     console.log('收到註冊請求:', req.body);
     
-    const { name, email, password, confirmPassword } = req.body;
+    const { username, email, password, confirmPassword } = req.body;
     
     // 驗證所有必要欄位
-    if (!name || !email || !password) {
+    if (!username || !email || !password) {
       return res.status(400).json({ message: '請提供所有必要資訊' });
     }
 
@@ -95,10 +96,11 @@ router.post('/register', async (req, res) => {
 
     // 創建新用戶
     const user = new User({
-      name,
+      username,
       email,
       password,
-      role: 'user'
+      role: 'user',
+      donateuser: 'no'
     });
 
     console.log('正在保存用戶...');
@@ -117,9 +119,10 @@ router.post('/register', async (req, res) => {
       token,
       user: {
         id: user._id,
-        name: user.name,
+        username: user.username,
         email: user.email,
-        role: user.role
+        role: user.role,
+        donateuser: user.donateuser
       }
     });
   } catch (error) {
@@ -143,7 +146,13 @@ router.get('/me', async (req, res) => {
       return res.status(404).json({ message: '用戶不存在' });
     }
 
-    res.json(user);
+    res.json({
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      donateuser: user.donateuser
+    });
   } catch (error) {
     console.error('獲取用戶信息錯誤:', error);
     res.status(401).json({ message: '未授權', error: error.message });

@@ -14,10 +14,11 @@ import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: '',
+    username: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    donateuser: 'no'  // 默認為非捐款用戶
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -111,12 +112,12 @@ const Register = () => {
               margin="normal"
               required
               fullWidth
-              id="name"
-              label="姓名"
-              name="name"
-              autoComplete="name"
+              id="username"
+              label="用戶名"
+              name="username"
+              autoComplete="username"
               autoFocus
-              value={formData.name}
+              value={formData.username}
               onChange={handleChange}
             />
             <TextField

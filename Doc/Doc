@@ -29,7 +29,7 @@ user的頁面: 使用目前的PostL.js，拿掉"New Post"、"Edit"、"Delete"按
   password: String,
   role: String, // 'admin' 或 'user'
   createdAt: Date,
-  donateuser:String
+  donateuser:String // 是否是捐款者
 }
 🔑 role 欄位是身份辨識的關鍵，用來控制是否可以發佈文章。
 

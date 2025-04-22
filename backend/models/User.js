@@ -14,7 +14,7 @@ mongoose.connection.on('connected', async () => {
 });
 
 const userSchema = new mongoose.Schema({
-  name: {
+  username: {
     type: String,
     required: true
   },
@@ -31,6 +31,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     enum: ['admin', 'user'],
     default: 'user'
+  },
+  donateuser: {
+    type: String,
+    enum: ['yes', 'no'],
+    default: 'no'
   },
   createdAt: {
     type: Date,
