@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const Post = require('../models/Post');
-const auth = require('../middleware/auth');
+const { auth, isAdmin } = require('../middleware/auth');
 
 // 驗證中間件
 const authMiddleware = async (req, res, next) => {
@@ -20,7 +20,7 @@ const authMiddleware = async (req, res, next) => {
   }
 };
 
-// 獲取所有文章
+// 獲取所有文章（公開）
 router.get('/', async (req, res) => {
   try {
     const posts = await Post.find()
@@ -32,12 +32,11 @@ router.get('/', async (req, res) => {
   }
 });
 
-// 獲取單篇文章
+// 獲取單篇文章（公開）
 router.get('/:id', async (req, res) => {
   try {
     const post = await Post.findById(req.params.id)
-      .populate('author', 'name email')
-      .populate('comments.user', 'name');
+      .populate('author', 'name email');
     if (!post) {
       return res.status(404).json({ message: '文章不存在' });
     }
@@ -47,8 +46,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// 創建文章
-router.post('/', auth, async (req, res) => {
+// 創建文章（僅管理員）
+router.post('/', auth, isAdmin, async (req, res) => {
   try {
     const { title, content, tags } = req.body;
     const post = new Post({
@@ -58,8 +57,6 @@ router.post('/', auth, async (req, res) => {
       tags: tags || []
     });
     await post.save();
-    
-    // 填充作者信息後返回
     await post.populate('author', 'name email');
     res.status(201).json(post);
   } catch (error) {
@@ -67,32 +64,30 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// 更新文章
-router.put('/:id', auth, async (req, res) => {
+// 更新文章（僅管理員）
+router.put('/:id', auth, isAdmin, async (req, res) => {
   try {
-    const { title, content } = req.body;
+    const { title, content, tags } = req.body;
     const post = await Post.findById(req.params.id);
     
     if (!post) {
       return res.status(404).json({ message: '文章不存在' });
     }
     
-    if (post.author.toString() !== req.user.id && req.user.role !== 'admin') {
-      return res.status(403).json({ message: '無權修改此文章' });
-    }
-    
     post.title = title;
     post.content = content;
+    if (tags) post.tags = tags;
     await post.save();
     
+    await post.populate('author', 'name email');
     res.json(post);
   } catch (error) {
     res.status(500).json({ message: '更新文章失敗', error: error.message });
   }
 });
 
-// 刪除文章
-router.delete('/:id', auth, async (req, res) => {
+// 刪除文章（僅管理員）
+router.delete('/:id', auth, isAdmin, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     
@@ -100,18 +95,14 @@ router.delete('/:id', auth, async (req, res) => {
       return res.status(404).json({ message: '文章不存在' });
     }
     
-    if (post.author.toString() !== req.user.id && req.user.role !== 'admin') {
-      return res.status(403).json({ message: '無權刪除此文章' });
-    }
-    
-    await post.remove();
+    await post.deleteOne();
     res.json({ message: '文章已刪除' });
   } catch (error) {
     res.status(500).json({ message: '刪除文章失敗', error: error.message });
   }
 });
 
-// 文章互動
+// 點讚文章（需要登入）
 router.post('/:id/like', auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
@@ -120,14 +111,11 @@ router.post('/:id/like', auth, async (req, res) => {
       return res.status(404).json({ message: '文章不存在' });
     }
     
-    // 檢查是否已經點讚
-    const likeIndex = post.likes.findIndex(like => like.user.toString() === req.user.id);
+    const likeIndex = post.likes.findIndex(like => like.user.toString() === req.user.userId);
     
     if (likeIndex === -1) {
-      // 添加點讚
-      post.likes.push({ user: req.user.id });
+      post.likes.push({ user: req.user.userId });
     } else {
-      // 取消點讚
       post.likes.splice(likeIndex, 1);
     }
     
@@ -138,7 +126,7 @@ router.post('/:id/like', auth, async (req, res) => {
   }
 });
 
-// 添加評論
+// 評論文章（需要登入）
 router.post('/:id/comments', auth, async (req, res) => {
   try {
     const { content } = req.body;
@@ -149,7 +137,7 @@ router.post('/:id/comments', auth, async (req, res) => {
     }
     
     post.comments.push({
-      user: req.user.id,
+      user: req.user.userId,
       content,
       authorName: req.user.name
     });

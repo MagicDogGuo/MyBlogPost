@@ -7,30 +7,57 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Chip,
+  Stack
 } from '@mui/material';
 
 const PostForm = ({ open, onClose, onSubmit, initialData }) => {
   const [formData, setFormData] = useState({
     title: '',
-    name: '',
-    text: '',
+    content: '',
+    tags: []
   });
+  const [tagInput, setTagInput] = useState('');
 
   useEffect(() => {
     if (initialData) {
       setFormData({
-        title: initialData.title,
-        name: initialData.names,
-        text: initialData.contentTexts,
+        title: initialData.title || '',
+        content: initialData.content || '',
+        tags: initialData.tags || []
+      });
+    } else {
+      setFormData({
+        title: '',
+        content: '',
+        tags: []
       });
     }
   }, [initialData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
-      [name]: value,
+      [name]: value
+    }));
+  };
+
+  const handleAddTag = (e) => {
+    if (e.key === 'Enter' && tagInput.trim()) {
+      e.preventDefault();
+      setFormData(prev => ({
+        ...prev,
+        tags: [...new Set([...prev.tags, tagInput.trim()])]
+      }));
+      setTagInput('');
+    }
+  };
+
+  const handleDeleteTag = (tagToDelete) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.filter(tag => tag !== tagToDelete)
     }));
   };
 
@@ -54,23 +81,34 @@ const PostForm = ({ open, onClose, onSubmit, initialData }) => {
               fullWidth
             />
             <TextField
-              label="作者"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              fullWidth
-            />
-            <TextField
               label="內容"
-              name="text"
-              value={formData.text}
+              name="content"
+              value={formData.content}
               onChange={handleChange}
               required
               multiline
               rows={4}
               fullWidth
             />
+            <TextField
+              label="添加標籤"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyPress={handleAddTag}
+              placeholder="按 Enter 添加標籤"
+              fullWidth
+            />
+            <Stack direction="row" spacing={1} flexWrap="wrap">
+              {formData.tags.map((tag, index) => (
+                <Chip
+                  key={index}
+                  label={tag}
+                  onDelete={() => handleDeleteTag(tag)}
+                  color="primary"
+                  sx={{ margin: '4px' }}
+                />
+              ))}
+            </Stack>
           </Box>
         </DialogContent>
         <DialogActions>

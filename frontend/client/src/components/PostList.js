@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React from 'react';
 import {
   Container,
   Typography,
@@ -7,50 +7,21 @@ import {
   CardContent,
   CardActions,
   Button,
-  Grid
+  Grid,
+  IconButton,
+  Tooltip
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { 
+  Edit as EditIcon, 
+  Delete as DeleteIcon
+} from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
-import { API_ENDPOINTS } from '../config/api';
 
-const PostList = () => {
+const PostList = ({ posts, onDelete, onEdit }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await axios.get(API_ENDPOINTS.POSTS.LIST);
-        setPosts(response.data);
-        setLoading(false);
-      } catch (err) {
-        setError('獲取文章列表失敗');
-        setLoading(false);
-      }
-    };
-
-    fetchPosts();
-  }, []);
-
-  if (loading) {
-    return (
-      <Container>
-        <Typography variant="h6">載入中...</Typography>
-      </Container>
-    );
-  }
-
-  if (error) {
-    return (
-      <Container>
-        <Typography color="error">{error}</Typography>
-      </Container>
-    );
-  }
+  const isAdmin = user?.role === 'admin';
 
   return (
     <Container sx={{ mt: 4 }}>
@@ -104,13 +75,37 @@ const PostList = () => {
                 )}
               </CardContent>
               <CardActions>
-                <Button 
-                  size="small" 
-                  color="primary" 
-                  onClick={() => navigate(`/posts/${post._id}`)}
-                >
-                  閱讀更多
-                </Button>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Button 
+                    size="small" 
+                    color="primary" 
+                    onClick={() => navigate(`/posts/${post._id}`)}
+                  >
+                    閱讀更多
+                  </Button>
+                  {isAdmin && (
+                    <>
+                      <Tooltip title="編輯文章">
+                        <IconButton 
+                          size="small" 
+                          color="primary" 
+                          onClick={() => onEdit(post)}
+                        >
+                          <EditIcon />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="刪除文章">
+                        <IconButton 
+                          size="small" 
+                          color="error" 
+                          onClick={() => onDelete(post._id)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </>
+                  )}
+                </Box>
               </CardActions>
             </Card>
           </Grid>

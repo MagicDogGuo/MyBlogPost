@@ -52,31 +52,41 @@ async function initData() {
       console.log('Found existing admin user');
     }
 
-    // 檢查是否已有文章
-    const existingPosts = await Post.countDocuments();
-    if (existingPosts === 0) {
-      // 創建文章，使用找到的或新創建的管理員用戶ID
-      for (const postData of defaultPosts) {
-        const post = new Post({
-          ...postData,
-          author: adminUser._id  // 使用正確的管理員ID
-        });
-        await post.save();
-      }
-      console.log('Created default posts with correct author reference');
-    } else {
-      // 更新現有文章的作者引用
-      const posts = await Post.find({ author: { $exists: false } });
-      for (const post of posts) {
-        post.author = adminUser._id;
-        await post.save();
-      }
-      console.log('Updated existing posts with correct author reference');
+    // 刪除所有現有文章並重新創建
+    await Post.deleteMany({});
+    console.log('Cleared existing posts');
+
+    // 創建新文章
+    for (const postData of defaultPosts) {
+      const post = new Post({
+        ...postData,
+        author: adminUser._id
+      });
+      await post.save();
+      
+      // 驗證文章是否正確保存
+      const savedPost = await Post.findById(post._id).populate('author');
+      console.log('Created post:', {
+        id: savedPost._id,
+        title: savedPost.title,
+        authorId: savedPost.author._id,
+        authorName: savedPost.author.name
+      });
     }
 
-    console.log('Initialization check completed successfully');
+    // 驗證所有文章的作者關聯
+    const allPosts = await Post.find().populate('author');
+    console.log('Verification - All posts:', allPosts.map(post => ({
+      id: post._id,
+      title: post.title,
+      authorId: post.author._id,
+      authorName: post.author.name
+    })));
+
+    console.log('Initialization completed successfully');
   } catch (error) {
     console.error('Error during initialization:', error);
+    throw error;
   }
 }
 
@@ -93,6 +103,7 @@ if (require.main === module) {
     })
     .catch(error => {
       console.error('Error:', error);
+      process.exit(1);
     });
 }
 

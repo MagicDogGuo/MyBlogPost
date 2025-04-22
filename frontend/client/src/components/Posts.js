@@ -22,7 +22,8 @@ function Posts() {
   const [comment, setComment] = useState('');
   const [openCommentDialog, setOpenCommentDialog] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
-  const { isAuthenticated, user } = useAuth();
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,7 +41,12 @@ function Posts() {
 
   const handleCreatePost = async (postData) => {
     try {
-      await axios.post(API_ENDPOINTS.POSTS.CREATE, postData);
+      const token = localStorage.getItem('token');
+      await axios.post(API_ENDPOINTS.POSTS.CREATE, postData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       fetchPosts();
       setOpenDialog(false);
     } catch (error) {
@@ -50,7 +56,16 @@ function Posts() {
 
   const handleUpdatePost = async (postData) => {
     try {
-      await axios.put(API_ENDPOINTS.POSTS.UPDATE(editingPost.id), postData);
+      const token = localStorage.getItem('token');
+      await axios.put(
+        API_ENDPOINTS.POSTS.UPDATE(editingPost._id), 
+        postData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
       fetchPosts();
       setOpenDialog(false);
       setEditingPost(null);
@@ -61,7 +76,15 @@ function Posts() {
 
   const handleDeletePost = async (id) => {
     try {
-      await axios.delete(API_ENDPOINTS.POSTS.DELETE(id));
+      const token = localStorage.getItem('token');
+      await axios.delete(
+        API_ENDPOINTS.POSTS.DELETE(id),
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
       fetchPosts();
     } catch (error) {
       console.error('Error deleting post:', error);
@@ -79,14 +102,14 @@ function Posts() {
         <Typography variant="h4" component="h1" gutterBottom>
           部落格文章
         </Typography>
-        {isAuthenticated && (
+        {isAdmin && (
           <Button
             variant="contained"
             color="primary"
             startIcon={<AddIcon />}
             onClick={() => setOpenDialog(true)}
           >
-            NEW POST
+            新增文章
           </Button>
         )}
       </Box>
@@ -95,15 +118,17 @@ function Posts() {
         onDelete={handleDeletePost}
         onEdit={handleEditPost}
       />
-      <PostForm
-        open={openDialog}
-        onClose={() => {
-          setOpenDialog(false);
-          setEditingPost(null);
-        }}
-        onSubmit={editingPost ? handleUpdatePost : handleCreatePost}
-        initialData={editingPost}
-      />
+      {isAdmin && (
+        <PostForm
+          open={openDialog}
+          onClose={() => {
+            setOpenDialog(false);
+            setEditingPost(null);
+          }}
+          onSubmit={editingPost ? handleUpdatePost : handleCreatePost}
+          initialData={editingPost}
+        />
+      )}
     </Container>
   );
 }
