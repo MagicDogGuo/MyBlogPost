@@ -4,12 +4,26 @@ import PostList from './PostList';
 import PostForm from './PostForm';
 import axios from 'axios';
 import './Posts.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { API_ENDPOINTS } from '../config/api';
+import { useAuth } from '../context/AuthContext';
+import { 
+  Edit as EditIcon, 
+  Delete as DeleteIcon, 
+  Favorite as FavoriteIcon,
+  Comment as CommentIcon,
+  Add as AddIcon
+} from '@mui/icons-material';
 
 function Posts() {
   const [posts, setPosts] = useState([]);
-  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
   const [editingPost, setEditingPost] = useState(null);
+  const [comment, setComment] = useState('');
+  const [openCommentDialog, setOpenCommentDialog] = useState(false);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const { isAuthenticated, user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchPosts();
@@ -17,7 +31,7 @@ function Posts() {
 
   const fetchPosts = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/posts');
+      const response = await axios.get(API_ENDPOINTS.POSTS.LIST);
       setPosts(response.data);
     } catch (error) {
       console.error('Error fetching posts:', error);
@@ -26,9 +40,9 @@ function Posts() {
 
   const handleCreatePost = async (postData) => {
     try {
-      await axios.post('http://localhost:5000/api/posts', postData);
+      await axios.post(API_ENDPOINTS.POSTS.CREATE, postData);
       fetchPosts();
-      setIsFormOpen(false);
+      setOpenDialog(false);
     } catch (error) {
       console.error('Error creating post:', error);
     }
@@ -36,9 +50,9 @@ function Posts() {
 
   const handleUpdatePost = async (postData) => {
     try {
-      await axios.put(`http://localhost:5000/api/posts/${editingPost.id}`, postData);
+      await axios.put(API_ENDPOINTS.POSTS.UPDATE(editingPost.id), postData);
       fetchPosts();
-      setIsFormOpen(false);
+      setOpenDialog(false);
       setEditingPost(null);
     } catch (error) {
       console.error('Error updating post:', error);
@@ -47,7 +61,7 @@ function Posts() {
 
   const handleDeletePost = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/posts/${id}`);
+      await axios.delete(API_ENDPOINTS.POSTS.DELETE(id));
       fetchPosts();
     } catch (error) {
       console.error('Error deleting post:', error);
@@ -56,48 +70,41 @@ function Posts() {
 
   const handleEditPost = (post) => {
     setEditingPost(post);
-    setIsFormOpen(true);
+    setOpenDialog(true);
   };
 
   return (
-    <div className="posts-container">
-      <div className="posts-content">
-        <Container maxWidth="md">
-          <Box sx={{ my: 4 }}>
-            <Link to="/" className="hover-text">
-              <Typography variant="h3" component="h1" gutterBottom  >
-                Blog Posts
-              </Typography>
-            </Link>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => setIsFormOpen(true)}
-              sx={{ mb: 3 }}
-            >
-              New Post
-            </Button>
-
-            {isFormOpen && (
-              <PostForm
-                onSubmit={editingPost ? handleUpdatePost : handleCreatePost}
-                onCancel={() => {
-                  setIsFormOpen(false);
-                  setEditingPost(null);
-                }}
-                initialData={editingPost}
-              />
-            )}
-
-            <PostList
-              posts={posts}
-              onDelete={handleDeletePost}
-              onEdit={handleEditPost}
-            />
-          </Box>
-        </Container>
-      </div>
-    </div>
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Typography variant="h4" component="h1" gutterBottom>
+          部落格文章
+        </Typography>
+        {isAuthenticated && (
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={() => setOpenDialog(true)}
+          >
+            NEW POST
+          </Button>
+        )}
+      </Box>
+      <PostList
+        posts={posts}
+        onDelete={handleDeletePost}
+        onEdit={handleEditPost}
+      />
+      <PostForm
+        open={openDialog}
+        onClose={() => {
+          setOpenDialog(false);
+          setEditingPost(null);
+        }}
+        onSubmit={editingPost ? handleUpdatePost : handleCreatePost}
+        initialData={editingPost}
+      />
+    </Container>
   );
 }
 

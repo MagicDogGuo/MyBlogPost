@@ -1,180 +1,122 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
+  Container,
+  Typography,
+  Box,
   Card,
   CardContent,
   CardActions,
-  Typography,
   Button,
-  Grid,
-  Box,
-  IconButton,
-  TextField,
-  List,
-  ListItem,
-  ListItemText,
-  Divider
+  Grid
 } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import CommentIcon from '@mui/icons-material/Comment';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
+import { API_ENDPOINTS } from '../config/api';
 
-const PostList = ({ posts, onDelete, onEdit }) => {
-  const [interactions, setInteractions] = useState({});
-  const [newComment, setNewComment] = useState({});
-  const [showComments, setShowComments] = useState({});
+const PostList = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    // 獲取每篇文章的互動數據
-    posts.forEach(post => {
-      fetchInteractions(post.id);
-    });
-  }, [posts]);
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get(API_ENDPOINTS.POSTS.LIST);
+        setPosts(response.data);
+        setLoading(false);
+      } catch (err) {
+        setError('獲取文章列表失敗');
+        setLoading(false);
+      }
+    };
 
-  const fetchInteractions = async (postId) => {
-    try {
-      const response = await axios.get(`http://localhost:5000/api/interactions/${postId}`);
-      setInteractions(prev => ({
-        ...prev,
-        [postId]: response.data
-      }));
-    } catch (error) {
-      console.error('Error fetching interactions:', error);
-    }
-  };
+    fetchPosts();
+  }, []);
 
-  const handleLike = async (postId) => {
-    try {
-      const response = await axios.post(`http://localhost:5000/api/interactions/${postId}/like`);
-      setInteractions(prev => ({
-        ...prev,
-        [postId]: response.data
-      }));
-    } catch (error) {
-      console.error('Error toggling like:', error);
-    }
-  };
+  if (loading) {
+    return (
+      <Container>
+        <Typography variant="h6">載入中...</Typography>
+      </Container>
+    );
+  }
 
-  const handleAddComment = async (postId) => {
-    if (!newComment[postId]?.trim()) return;
-
-    try {
-      const response = await axios.post(`http://localhost:5000/api/interactions/${postId}/comment`, {
-        content: newComment[postId]
-      });
-      setInteractions(prev => ({
-        ...prev,
-        [postId]: response.data
-      }));
-      setNewComment(prev => ({
-        ...prev,
-        [postId]: ''
-      }));
-    } catch (error) {
-      console.error('Error adding comment:', error);
-    }
-  };
-
-  const toggleComments = (postId) => {
-    setShowComments(prev => ({
-      ...prev,
-      [postId]: !prev[postId]
-    }));
-  };
+  if (error) {
+    return (
+      <Container>
+        <Typography color="error">{error}</Typography>
+      </Container>
+    );
+  }
 
   return (
-    <Box>
-      {posts.map((post) => (
-        <Card key={post.id} sx={{ mb: 3, backgroundColor: 'rgba(255, 255, 255, 0.95)' }}>
-          <CardContent>
-            <Typography variant="h5" component="h2" gutterBottom>
-              {post.title}
-            </Typography>
-            <Typography color="textSecondary" gutterBottom>
-              Author: {post.names}
-            </Typography>
-            <Typography variant="body2" component="p" sx={{ mt: 2 }}>
-              {post.contentTexts}
-            </Typography>
-            <Typography variant="caption" color="textSecondary" sx={{ mt: 2, display: 'block' }}>
-              Published: {new Date(post.date).toLocaleDateString()}
-            </Typography>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
-              <Box sx={{ display: 'flex', gap: 1 }}>
-                <IconButton 
-                  onClick={() => handleLike(post.id)}
-                  color={interactions[post.id]?.likes?.includes(localStorage.getItem('userId')) ? 'error' : 'default'}
-                >
-                  {interactions[post.id]?.likes?.includes(localStorage.getItem('userId')) ? 
-                    <FavoriteIcon /> : <FavoriteBorderIcon />}
-                </IconButton>
-                <IconButton onClick={() => toggleComments(post.id)}>
-                  <CommentIcon />
-                </IconButton>
-              </Box>
-              <Box>
-                <Button 
-                  variant="outlined" 
-                  color="primary" 
-                  onClick={() => onEdit(post)}
-                  sx={{ mr: 1 }}
-                >
-                  Edit
-                </Button>
-                <Button 
-                  variant="outlined" 
-                  color="error" 
-                  onClick={() => onDelete(post.id)}
-                >
-                  Delete
-                </Button>
-              </Box>
-            </Box>
+    <Container sx={{ mt: 4 }}>
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h4" component="h1">
+          文章列表
+        </Typography>
+      </Box>
 
-            {showComments[post.id] && (
-              <Box sx={{ mt: 2 }}>
-                <Typography variant="subtitle1" gutterBottom>
-                  comments ({interactions[post.id]?.comments?.length || 0})
+      <Grid container spacing={3}>
+        {posts.map((post) => (
+          <Grid item xs={12} key={post._id}>
+            <Card>
+              <CardContent>
+                <Typography variant="h5" component="h2" gutterBottom>
+                  {post.title}
                 </Typography>
-                <List>
-                  {(interactions[post.id]?.comments || []).map((comment, index) => (
-                    <React.Fragment key={index}>
-                      <ListItem>
-                        <ListItemText 
-                          primary={comment.content}
-                          secondary={`${comment.userId.name} - ${new Date(comment.createdAt).toLocaleString()}`}
-                        />
-                      </ListItem>
-                      {index < (interactions[post.id]?.comments?.length - 1) && <Divider />}
-                    </React.Fragment>
-                  ))}
-                </List>
-                <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
-                  <TextField
-                    fullWidth
-                    variant="outlined"
-                    placeholder="Add a comment..."
-                    value={newComment[post.id] || ''}
-                    onChange={(e) => setNewComment(prev => ({
-                      ...prev,
-                      [post.id]: e.target.value
-                    }))}
-                  />
-                  <Button 
-                    variant="contained" 
-                    onClick={() => handleAddComment(post.id)}
-                  >
-                    Submit
-                  </Button>
-                </Box>
-              </Box>
-            )}
-          </CardContent>
-        </Card>
-      ))}
-    </Box>
+                <Typography color="textSecondary" gutterBottom>
+                  作者: {post.author?.name || '未知作者'}
+                </Typography>
+                <Typography variant="body1" component="p" sx={{ 
+                  mb: 2,
+                  display: '-webkit-box',
+                  WebkitLineClamp: 3,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden'
+                }}>
+                  {post.content}
+                </Typography>
+                <Typography color="textSecondary" sx={{ mb: 1 }}>
+                  發布時間: {new Date(post.createdAt).toLocaleString()}
+                </Typography>
+                {post.tags && post.tags.length > 0 && (
+                  <Box sx={{ mt: 1 }}>
+                    {post.tags.map((tag, index) => (
+                      <Typography
+                        key={index}
+                        variant="caption"
+                        sx={{
+                          mr: 1,
+                          p: 0.5,
+                          bgcolor: 'primary.light',
+                          color: 'white',
+                          borderRadius: 1
+                        }}
+                      >
+                        {tag}
+                      </Typography>
+                    ))}
+                  </Box>
+                )}
+              </CardContent>
+              <CardActions>
+                <Button 
+                  size="small" 
+                  color="primary" 
+                  onClick={() => navigate(`/posts/${post._id}`)}
+                >
+                  閱讀更多
+                </Button>
+              </CardActions>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Container>
   );
 };
 

@@ -9,7 +9,7 @@ import {
   DialogActions,
 } from '@mui/material';
 
-const PostForm = ({ onSubmit, onCancel, initialData }) => {
+const PostForm = ({ open, onClose, onSubmit, initialData }) => {
   const [formData, setFormData] = useState({
     title: '',
     name: '',
@@ -40,13 +40,13 @@ const PostForm = ({ onSubmit, onCancel, initialData }) => {
   };
 
   return (
-    <Dialog open={true} onClose={onCancel} maxWidth="sm" fullWidth>
-      <DialogTitle>{initialData ? 'Edit Post' : 'New Post'}</DialogTitle>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <DialogTitle>{initialData ? '編輯文章' : '新增文章'}</DialogTitle>
       <form onSubmit={handleSubmit}>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <TextField
-              label="Title"
+              label="標題"
               name="title"
               value={formData.title}
               onChange={handleChange}
@@ -54,7 +54,7 @@ const PostForm = ({ onSubmit, onCancel, initialData }) => {
               fullWidth
             />
             <TextField
-              label="Author"
+              label="作者"
               name="name"
               value={formData.name}
               onChange={handleChange}
@@ -62,7 +62,7 @@ const PostForm = ({ onSubmit, onCancel, initialData }) => {
               fullWidth
             />
             <TextField
-              label="Content"
+              label="內容"
               name="text"
               value={formData.text}
               onChange={handleChange}
@@ -74,9 +74,9 @@ const PostForm = ({ onSubmit, onCancel, initialData }) => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onCancel}>Cancel</Button>
+          <Button onClick={onClose}>取消</Button>
           <Button type="submit" variant="contained" color="primary">
-            {initialData ? 'Update' : 'Publish'}
+            {initialData ? '更新' : '發布'}
           </Button>
         </DialogActions>
       </form>

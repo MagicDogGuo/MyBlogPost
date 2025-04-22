@@ -1,0 +1,56 @@
+✅ 功能需求整理
+
+新增一個login功能
+
+使用者可登入（分為 admin 和 user）
+
+只有管理員可以發佈文章
+
+所有使用者皆可瀏覽文章
+
+使用者無法新增／刪除／修改文章（只有管理員可操作文章）
+
+admin的頁面: 使用目前的Posts.js
+user的頁面: 使用目前的PostL.js，拿掉"New Post"、"Edit"、"Delete"按鈕
+
+有一個.env可以設定mongoDB的連線字串
+
+
+🛠 需要的 MongoDB Collections & 欄位設計如下：
+
+1️⃣ users collection
+紀錄登入帳號與身份資訊。
+
+
+{
+  _id: ObjectId,
+  username: String,
+  email: String,
+  password: String,
+  role: String, // 'admin' 或 'user'
+  createdAt: Date,
+  donateuser:String
+}
+🔑 role 欄位是身份辨識的關鍵，用來控制是否可以發佈文章。
+
+
+
+2️⃣ posts collection
+紀錄每篇文章的內容與作者。
+
+{
+  _id: ObjectId,
+  title: String,
+  content: String,
+  authorId: ObjectId, // 對應 users._id，應該為 admin 身份
+  createdAt: Date,
+  updatedAt: Date,
+  tags: [String] // 可選：分類用
+}
+
+
+🔐 權限邏輯（後端控制建議）
+功能	條件
+發佈文章	user.role === 'admin'
+編輯/刪除文章	user.role === 'admin'
+瀏覽文章	所有人皆可（不需登入也可）
