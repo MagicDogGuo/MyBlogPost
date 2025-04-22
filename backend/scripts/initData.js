@@ -33,41 +33,68 @@ const defaultPosts = [
 
 async function initData() {
   try {
-    // 連接 MongoDB
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log('Connected to MongoDB');
-
-    // 清空現有數據
-    await User.deleteMany({});
-    await Post.deleteMany({});
-    console.log('Cleared existing data');
-
-    // 創建管理員用戶
-    const admin = new User({
-      name: defaultAdmin.name,
-      email: defaultAdmin.email,
-      password: defaultAdmin.password,
-      role: defaultAdmin.role
-    });
-    await admin.save();
-    console.log('Created admin user');
-
-    // 創建文章
-    for (const postData of defaultPosts) {
-      const post = new Post({
-        ...postData,
-        author: admin._id
+    let adminUser;
+    
+    // 檢查是否已有管理員用戶
+    const existingAdmin = await User.findOne({ email: defaultAdmin.email });
+    if (!existingAdmin) {
+      // 創建管理員用戶
+      adminUser = new User({
+        name: defaultAdmin.name,
+        email: defaultAdmin.email,
+        password: defaultAdmin.password,
+        role: defaultAdmin.role
       });
-      await post.save();
+      await adminUser.save();
+      console.log('Created admin user');
+    } else {
+      adminUser = existingAdmin;
+      console.log('Found existing admin user');
     }
-    console.log('Created default posts');
 
-    console.log('Initialization completed successfully');
+    // 檢查是否已有文章
+    const existingPosts = await Post.countDocuments();
+    if (existingPosts === 0) {
+      // 創建文章，使用找到的或新創建的管理員用戶ID
+      for (const postData of defaultPosts) {
+        const post = new Post({
+          ...postData,
+          author: adminUser._id  // 使用正確的管理員ID
+        });
+        await post.save();
+      }
+      console.log('Created default posts with correct author reference');
+    } else {
+      // 更新現有文章的作者引用
+      const posts = await Post.find({ author: { $exists: false } });
+      for (const post of posts) {
+        post.author = adminUser._id;
+        await post.save();
+      }
+      console.log('Updated existing posts with correct author reference');
+    }
+
+    console.log('Initialization check completed successfully');
   } catch (error) {
     console.error('Error during initialization:', error);
-  } finally {
-    await mongoose.disconnect();
   }
 }
 
-initData(); 
+// 如果這個文件被直接運行（而不是被導入），則執行初始化
+if (require.main === module) {
+  // 如果是直接運行，需要先連接數據庫
+  mongoose.connect(process.env.MONGODB_URI)
+    .then(async () => {
+      console.log('Connected to MongoDB');
+      await initData();
+      // 只有在直接運行時才斷開連接
+      await mongoose.disconnect();
+      console.log('Disconnected from MongoDB');
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+}
+
+// 導出初始化函數，以便可以在 app.js 中使用
+module.exports = initData; 

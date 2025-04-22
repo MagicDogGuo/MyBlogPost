@@ -4,14 +4,19 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const authRoutes = require('./routes/auth');
 const postRoutes = require('./routes/posts');
+const initData = require('./scripts/initData');
 
 dotenv.config();
 
 const app = express();
 
-// 連接 MongoDB
+// 連接 MongoDB 並初始化數據
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('MongoDB 連接成功'))
+  .then(async () => {
+    console.log('MongoDB 連接成功');
+    // 初始化數據
+    await initData();
+  })
   .catch(err => console.error('MongoDB 連接失敗:', err));
 
 // 中間件
