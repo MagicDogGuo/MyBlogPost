@@ -24,5 +24,11 @@ export const API_ENDPOINTS = {
     COMMENT: (postId) => `${API_BASE_URL}/interactions/${postId}/comment`,
     DELETE_COMMENT: (postId, commentId) => 
       `${API_BASE_URL}/interactions/${postId}/comment/${commentId}`
+  },
+
+  // 支付相關
+  PAYMENT: {
+    CREATE_INTENT: `${API_BASE_URL}/payment/create-payment-intent`,
+    UPDATE_STATUS: `${API_BASE_URL}/payment/update-status`
   }
 }; 

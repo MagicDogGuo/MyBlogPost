@@ -31,12 +31,17 @@ const CheckoutForm = ({ amount, onSuccess }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setProcessing(true);
+    setError(null);
 
     if (!stripe || !elements) {
+      console.error('Stripe 或 Elements 未初始化');
+      setError('支付系統未準備就緒，請稍後再試');
+      setProcessing(false);
       return;
     }
 
     try {
+      console.log('開始創建支付意向...');
       // 創建支付意圖
       const { data: { clientSecret } } = await axios.post(
         API_ENDPOINTS.PAYMENT.CREATE_INTENT,
@@ -47,7 +52,9 @@ const CheckoutForm = ({ amount, onSuccess }) => {
           }
         }
       );
+      console.log('支付意向創建成功:', clientSecret);
 
+      console.log('開始確認支付...');
       // 確認支付
       const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(
         clientSecret,
@@ -63,8 +70,10 @@ const CheckoutForm = ({ amount, onSuccess }) => {
       );
 
       if (stripeError) {
+        console.error('Stripe 支付錯誤:', stripeError);
         setError(stripeError.message);
       } else if (paymentIntent.status === 'succeeded') {
+        console.log('支付成功，開始更新用戶狀態...');
         // 更新用戶捐款狀態
         await axios.post(
           API_ENDPOINTS.PAYMENT.UPDATE_STATUS,
@@ -75,10 +84,12 @@ const CheckoutForm = ({ amount, onSuccess }) => {
             }
           }
         );
+        console.log('用戶狀態更新成功');
         onSuccess();
       }
     } catch (err) {
-      setError(err.message);
+      console.error('支付過程發生錯誤:', err);
+      setError(err.response?.data?.message || err.message || '支付過程發生錯誤');
     } finally {
       setProcessing(false);
     }
