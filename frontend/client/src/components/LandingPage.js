@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Typography, Box, Button, Paper } from '@mui/material';
 import { Link } from 'react-router-dom';
+import DonateButton from './DonateButton';
 import './LandingPage.css';
 
 const LandingPage = () => {
@@ -24,20 +25,23 @@ const LandingPage = () => {
             <Typography variant="h5" component="h2" gutterBottom sx={{ mb: 4 }}>
               Sharing my thoughts, experiences, and stories
             </Typography>
-            <Button 
-              component={Link} 
-              to="/posts" 
-              variant="contained" 
-              size="large"
-              sx={{ 
-                backgroundColor: '#4CAF50',
-                '&:hover': {
-                  backgroundColor: '#45a049',
-                }
-              }}
-            >
-              View Posts
-            </Button>
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <Button 
+                component={Link} 
+                to="/posts" 
+                variant="contained" 
+                size="large"
+                sx={{ 
+                  backgroundColor: '#4CAF50',
+                  '&:hover': {
+                    backgroundColor: '#45a049',
+                  }
+                }}
+              >
+                View Posts
+              </Button>
+              <DonateButton />
+            </Box>
           </Box>
         </Container>
       </div>

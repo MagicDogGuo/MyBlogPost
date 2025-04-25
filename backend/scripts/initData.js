@@ -45,11 +45,18 @@ const defaultPosts = [
 
 async function initData() {
   try {
+    console.log('開始初始化數據...');
+    console.log('MongoDB URI:', process.env.MONGODB_URI);
+    
     let adminUser;
     
     // 檢查是否已有管理員用戶
+    console.log('檢查管理員用戶...');
     const existingAdmin = await User.findOne({ email: defaultAdmin.email });
+    console.log('現有管理員用戶:', existingAdmin ? '存在' : '不存在');
+    
     if (!existingAdmin) {
+      console.log('創建新管理員用戶...');
       // 創建管理員用戶
       adminUser = new User({
         username: defaultAdmin.username,
@@ -60,7 +67,7 @@ async function initData() {
         createdAt: defaultAdmin.createdAt
       });
       await adminUser.save();
-      console.log('Created admin user:', {
+      console.log('管理員用戶創建成功:', {
         id: adminUser._id,
         username: adminUser.username,
         role: adminUser.role,
@@ -68,12 +75,20 @@ async function initData() {
       });
     } else {
       adminUser = existingAdmin;
-      console.log('Found existing admin user');
+      console.log('使用現有管理員用戶:', {
+        id: adminUser._id,
+        username: adminUser.username,
+        role: adminUser.role
+      });
     }
 
     // 檢查是否已有一般用戶
+    console.log('檢查一般用戶...');
     const existingUser = await User.findOne({ email: defaultUser.email });
+    console.log('現有一般用戶:', existingUser ? '存在' : '不存在');
+    
     if (!existingUser) {
+      console.log('創建新一般用戶...');
       // 創建一般用戶
       const normalUser = new User({
         username: defaultUser.username,
@@ -84,19 +99,27 @@ async function initData() {
         createdAt: defaultUser.createdAt
       });
       await normalUser.save();
-      console.log('Created normal user:', {
+      console.log('一般用戶創建成功:', {
         id: normalUser._id,
         username: normalUser.username,
         role: normalUser.role,
         donateuser: normalUser.donateuser
       });
+    } else {
+      console.log('使用現有一般用戶:', {
+        id: existingUser._id,
+        username: existingUser.username,
+        role: existingUser.role
+      });
     }
 
     // 刪除所有現有文章並重新創建
+    console.log('清理現有文章...');
     await Post.deleteMany({});
-    console.log('Cleared existing posts');
+    console.log('現有文章已清理');
 
     // 創建新文章
+    console.log('開始創建新文章...');
     for (const postData of defaultPosts) {
       const post = new Post({
         ...postData,
@@ -108,7 +131,7 @@ async function initData() {
       
       // 驗證文章是否正確保存
       const savedPost = await Post.findById(post._id).populate('author');
-      console.log('Created post:', {
+      console.log('文章創建成功:', {
         id: savedPost._id,
         title: savedPost.title,
         authorId: savedPost.author._id,
@@ -117,17 +140,18 @@ async function initData() {
     }
 
     // 驗證所有文章的作者關聯
+    console.log('驗證所有文章...');
     const allPosts = await Post.find().populate('author');
-    console.log('Verification - All posts:', allPosts.map(post => ({
+    console.log('所有文章驗證完成:', allPosts.map(post => ({
       id: post._id,
       title: post.title,
       authorId: post.author._id,
       authorUsername: post.author.username
     })));
 
-    console.log('Initialization completed successfully');
+    console.log('數據初始化完成');
   } catch (error) {
-    console.error('Error during initialization:', error);
+    console.error('初始化過程中出錯:', error);
     throw error;
   }
 }
@@ -135,16 +159,17 @@ async function initData() {
 // 如果這個文件被直接運行（而不是被導入），則執行初始化
 if (require.main === module) {
   // 如果是直接運行，需要先連接數據庫
+  console.log('正在連接 MongoDB...');
   mongoose.connect(process.env.MONGODB_URI)
     .then(async () => {
-      console.log('Connected to MongoDB');
+      console.log('MongoDB 連接成功');
       await initData();
       // 只有在直接運行時才斷開連接
       await mongoose.disconnect();
-      console.log('Disconnected from MongoDB');
+      console.log('MongoDB 連接已斷開');
     })
     .catch(error => {
-      console.error('Error:', error);
+      console.error('MongoDB 連接失敗:', error);
       process.exit(1);
     });
 }

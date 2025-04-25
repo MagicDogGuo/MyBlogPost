@@ -1,18 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-// 刪除現有的集合和索引
-mongoose.connection.on('connected', async () => {
-  try {
-    await mongoose.connection.db.collection('users').drop();
-  } catch (error) {
-    // 如果集合不存在，忽略錯誤
-    if (error.code !== 26) {
-      console.error('刪除集合錯誤:', error);
-    }
-  }
-});
-
 const userSchema = new mongoose.Schema({
   username: {
     type: String,

@@ -9,6 +9,7 @@ import {
   Container
 } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
+import DonateButton from './DonateButton';
 
 const Layout = () => {
   const { user, logout } = useAuth();
@@ -17,14 +18,6 @@ const Layout = () => {
   const handleLogout = () => {
     logout();
     navigate('/login');
-  };
-
-  const handleDonate = () => {
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-    navigate('/donate');
   };
 
   return (
@@ -46,18 +39,7 @@ const Layout = () => {
                   文章列表
                 </Button>
                 {user.role !== 'admin' && (  // 只對非管理員用戶顯示捐款按鈕
-                  <Button 
-                    color="inherit"
-                    onClick={handleDonate}
-                    sx={{
-                      bgcolor: user.donateuser === 'yes' ? 'success.main' : 'warning.main',
-                      '&:hover': {
-                        bgcolor: user.donateuser === 'yes' ? 'success.dark' : 'warning.dark',
-                      }
-                    }}
-                  >
-                    {user.donateuser === 'yes' ? '已捐款' : '捐款支持'}
-                  </Button>
+                  <DonateButton />
                 )}
                 <Button color="inherit" onClick={handleLogout}>
                   登出
@@ -71,18 +53,7 @@ const Layout = () => {
                 <Button color="inherit" onClick={() => navigate('/register')}>
                   註冊
                 </Button>
-                <Button 
-                  color="inherit"
-                  onClick={handleDonate}
-                  sx={{
-                    bgcolor: 'warning.main',
-                    '&:hover': {
-                      bgcolor: 'warning.dark',
-                    }
-                  }}
-                >
-                  捐款支持
-                </Button>
+                <DonateButton />
               </>
             )}
           </Box>
