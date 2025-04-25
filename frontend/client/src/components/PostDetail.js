@@ -8,7 +8,12 @@ import {
   Button,
   Chip,
   IconButton,
-  Tooltip
+  Tooltip,
+  TextField,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions
 } from '@mui/material';
 import { 
   Edit as EditIcon, 
@@ -27,6 +32,13 @@ const PostDetail = () => {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [editForm, setEditForm] = useState({
+    title: '',
+    content: '',
+    tags: []
+  });
+  const [tagInput, setTagInput] = useState('');
   const isAdmin = user?.role === 'admin';
 
   useEffect(() => {
@@ -37,6 +49,11 @@ const PostDetail = () => {
     try {
       const response = await axios.get(API_ENDPOINTS.POSTS.DETAIL(id));
       setPost(response.data);
+      setEditForm({
+        title: response.data.title,
+        content: response.data.content,
+        tags: response.data.tags || []
+      });
       setLoading(false);
     } catch (error) {
       setError('Failed to load post');
@@ -63,8 +80,62 @@ const PostDetail = () => {
     }
   };
 
-  const handleEditPost = () => {
-    navigate(`/posts/edit/${id}`);
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
+
+  const handleEditClose = () => {
+    setIsEditing(false);
+    setEditForm({
+      title: post.title,
+      content: post.content,
+      tags: post.tags || []
+    });
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleAddTag = (e) => {
+    if (e.key === 'Enter' && tagInput.trim()) {
+      e.preventDefault();
+      setEditForm(prev => ({
+        ...prev,
+        tags: [...new Set([...prev.tags, tagInput.trim()])]
+      }));
+      setTagInput('');
+    }
+  };
+
+  const handleDeleteTag = (tagToDelete) => {
+    setEditForm(prev => ({
+      ...prev,
+      tags: prev.tags.filter(tag => tag !== tagToDelete)
+    }));
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.put(
+        API_ENDPOINTS.POSTS.UPDATE(id),
+        editForm,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      await fetchPost();
+      setIsEditing(false);
+    } catch (error) {
+      setError('Failed to update post');
+    }
   };
 
   if (loading) return <div>Loading...</div>;
@@ -78,7 +149,7 @@ const PostDetail = () => {
           <Button
             startIcon={<ArrowBackIcon />}
             onClick={() => navigate('/posts')}
-            sx={{ mb: 2 }}
+            className="back-button"
           >
             Back to Posts
           </Button>
@@ -91,7 +162,7 @@ const PostDetail = () => {
               {isAdmin && (
                 <Box>
                   <Tooltip title="Edit Post">
-                    <IconButton onClick={handleEditPost} color="primary">
+                    <IconButton onClick={handleEditClick} color="primary">
                       <EditIcon />
                     </IconButton>
                   </Tooltip>
@@ -131,6 +202,57 @@ const PostDetail = () => {
           </Paper>
         </Box>
       </Container>
+
+      {/* Edit Dialog */}
+      <Dialog open={isEditing} onClose={handleEditClose} maxWidth="md" fullWidth>
+        <DialogTitle>Edit Post</DialogTitle>
+        <DialogContent>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
+            <TextField
+              label="Title"
+              name="title"
+              value={editForm.title}
+              onChange={handleEditChange}
+              required
+              fullWidth
+            />
+            <TextField
+              label="Content"
+              name="content"
+              value={editForm.content}
+              onChange={handleEditChange}
+              required
+              multiline
+              rows={6}
+              fullWidth
+            />
+            <TextField
+              label="Add Tags"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyPress={handleAddTag}
+              placeholder="Press Enter to add a tag"
+              fullWidth
+            />
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              {editForm.tags.map((tag, index) => (
+                <Chip
+                  key={index}
+                  label={tag}
+                  onDelete={() => handleDeleteTag(tag)}
+                  color="primary"
+                />
+              ))}
+            </Box>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleEditClose}>Cancel</Button>
+          <Button onClick={handleSaveEdit} variant="contained" color="primary">
+            Save Changes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

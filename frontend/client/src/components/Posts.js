@@ -100,9 +100,7 @@ function Posts() {
     <div className="posts-container">
       <div className="posts-content">
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-          <Typography variant="h4" component="h1" gutterBottom sx={{ color: 'black', margin: 0 }}>
-            Blog Posts
-          </Typography>
+
           {isAdmin && (
             <Button
               variant="contained"

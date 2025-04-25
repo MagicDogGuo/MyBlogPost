@@ -1,7 +1,6 @@
 import React from 'react';
 import { Container, Typography, Box, Button, Paper } from '@mui/material';
 import { Link } from 'react-router-dom';
-import DonateButton from './DonateButton';
 import './LandingPage.css';
 
 const LandingPage = () => {
@@ -40,7 +39,6 @@ const LandingPage = () => {
               >
                 View Posts
               </Button>
-              <DonateButton />
             </Box>
           </Box>
         </Container>
