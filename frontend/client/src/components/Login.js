@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { useNavigate, Link as RouterLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import './Login.css';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -23,14 +24,14 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 如果用戶已登入，重定向到首頁
+  // If user is already logged in, redirect to home page
   useEffect(() => {
     if (user) {
       navigate('/');
     }
   }, [user, navigate]);
 
-  // 顯示註冊成功的消息
+  // Show registration success message
   useEffect(() => {
     if (location.state?.message) {
       setError(location.state.message);
@@ -53,90 +54,101 @@ const Login = () => {
     try {
       const result = await login(formData);
       if (result.success) {
-        // 重定向到之前嘗試訪問的頁面，如果沒有則重定向到首頁
+        // Redirect to previously attempted page, or home if none
         const from = location.state?.from?.pathname || '/';
         navigate(from);
       } else {
         setError(result.message);
       }
     } catch (err) {
-      setError('登入失敗，請稍後再試');
+      setError('Login failed, please try again later');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Paper
-          elevation={3}
+    <div className="login-page">
+      <Container component="main" maxWidth="xs">
+        <Box
           sx={{
-            padding: 4,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            width: '100%',
           }}
         >
-          <Typography component="h1" variant="h5">
-            登入
-          </Typography>
-          {error && (
-            <Alert severity={location.state?.message ? "success" : "error"} sx={{ width: '100%', mt: 2 }}>
-              {error}
-            </Alert>
-          )}
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="電子郵件"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              value={formData.email}
-              onChange={handleChange}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="密碼"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              value={formData.password}
-              onChange={handleChange}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              disabled={loading}
-            >
-              {loading ? '登入中...' : '登入'}
-            </Button>
-            <Box sx={{ textAlign: 'center' }}>
-              <Link component={RouterLink} to="/register" variant="body2">
-                還沒有帳號？立即註冊
-              </Link>
+          <Paper
+            elevation={3}
+            className="login-paper"
+            sx={{
+              padding: 4,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              width: '100%',
+            }}
+          >
+            <Typography component="h1" variant="h5" sx={{ mb: 3, color: '#333' }}>
+              Login
+            </Typography>
+            {error && (
+              <Alert severity={location.state?.message ? "success" : "error"} sx={{ width: '100%', mt: 2 }}>
+                {error}
+              </Alert>
+            )}
+            <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email"
+                name="email"
+                autoComplete="email"
+                autoFocus
+                value={formData.email}
+                onChange={handleChange}
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                value={formData.password}
+                onChange={handleChange}
+                sx={{ mb: 2 }}
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ 
+                  mt: 3, 
+                  mb: 2,
+                  backgroundColor: '#4CAF50',
+                  '&:hover': {
+                    backgroundColor: '#45a049',
+                  }
+                }}
+                disabled={loading}
+              >
+                {loading ? 'Logging in...' : 'Login'}
+              </Button>
+              <Box sx={{ textAlign: 'center' }}>
+                <Link component={RouterLink} to="/register" variant="body2" sx={{ color: '#4CAF50' }}>
+                  Don't have an account? Sign up
+                </Link>
+              </Box>
             </Box>
-          </Box>
-        </Paper>
-      </Box>
-    </Container>
+          </Paper>
+        </Box>
+      </Container>
+    </div>
   );
 };
 

@@ -58,13 +58,13 @@ const LandingPage = () => {
             <Typography>Explore posts by different topics</Typography>
           </Paper>
           <Paper elevation={3} sx={{ p: 4, maxWidth: 300, textAlign: 'center' }}>
-            <Typography variant="h5" gutterBottom>Engage and Share</Typography>
-            <Typography>Feel free to leave comments and share your thoughts</Typography>
+            <Typography variant="h5" gutterBottom>Share knowledge</Typography>
+            <Typography>Share HCI knowledge and game-related news</Typography>
           </Paper>
         </Box>
       </Container>
 
-      {/* Footer */}
+      {/* Footer
       <footer className="footer">
         <Container maxWidth="lg">
           <Box sx={{ 
@@ -89,7 +89,7 @@ const LandingPage = () => {
             </Box>
           </Box>
         </Container>
-      </footer>
+      </footer> */}
     </div>
   );
 };

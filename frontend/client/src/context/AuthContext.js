@@ -43,27 +43,27 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       return { 
         success: false, 
-        message: error.response?.data?.message || '登入失敗'
+        message: error.response?.data?.message || 'Login failed'
       };
     }
   };
 
   const register = async (formData) => {
     try {
-      console.log('發送註冊請求:', formData);
+      console.log('Sending registration request:', formData);
       const response = await axios.post(API_ENDPOINTS.AUTH.REGISTER, formData);
-      console.log('註冊響應:', response.data);
+      console.log('Registration response:', response.data);
       
-      // 註冊成功後不自動登入，而是返回成功訊息
+      // After successful registration, return success message instead of auto-login
       return { 
         success: true,
-        message: '註冊成功，請登入'
+        message: 'Registration successful, please login'
       };
     } catch (error) {
-      console.error('註冊錯誤:', error.response?.data || error);
+      console.error('Registration error:', error.response?.data || error);
       return { 
         success: false, 
-        message: error.response?.data?.message || '註冊失敗，請稍後再試'
+        message: error.response?.data?.message || 'Registration failed, please try again later'
       };
     }
   };

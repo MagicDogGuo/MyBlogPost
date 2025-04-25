@@ -36,22 +36,22 @@ const Layout = () => {
             {user ? (
               <>
                 <Button color="inherit" onClick={() => navigate('/posts')}>
-                  文章列表
+                  Posts
                 </Button>
-                {user.role !== 'admin' && (  // 只對非管理員用戶顯示捐款按鈕
+                {user.role !== 'admin' && (  // Only show donate button for non-admin users
                   <DonateButton />
                 )}
                 <Button color="inherit" onClick={handleLogout}>
-                  登出
+                  Logout
                 </Button>
               </>
             ) : (
               <>
                 <Button color="inherit" onClick={() => navigate('/login')}>
-                  登入
+                  Login
                 </Button>
                 <Button color="inherit" onClick={() => navigate('/register')}>
-                  註冊
+                  Register
                 </Button>
                 <DonateButton />
               </>

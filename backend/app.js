@@ -11,19 +11,19 @@ dotenv.config();
 const app = express();
 
 // 連接 MongoDB 並初始化數據
-console.log('正在連接 MongoDB...');
+console.log('Connecting to MongoDB...');
 console.log('MongoDB URI:', process.env.MONGODB_URI);
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(async () => {
-    console.log('MongoDB 連接成功');
+    console.log('MongoDB connection successful');
     // 初始化數據
-    console.log('開始初始化數據...');
+    console.log('Starting to initialize data...');
     await initData();
-    console.log('數據初始化完成');
+    console.log('Data initialization completed');
   })
   .catch(err => {
-    console.error('MongoDB 連接失敗:', err);
+    console.error('MongoDB connection failed:', err);
     process.exit(1);
   });
 
@@ -38,7 +38,7 @@ app.use('/api/posts', postRoutes);
 // 錯誤處理
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ message: '伺服器錯誤' });
+  res.status(500).json({ message: 'Server error' });
 });
 
 const PORT = process.env.PORT || 5000;

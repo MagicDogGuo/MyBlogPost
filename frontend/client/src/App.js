@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Layout from './components/Layout';
 import LandingPage from './components/LandingPage';
 import Posts from './components/Posts';
+import PostDetail from './components/PostDetail';
 import Login from './components/Login';
 import Register from './components/Register';
 
@@ -12,7 +13,7 @@ const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div>載入中...</div>;
+    return <div>Loading...</div>;
   }
 
   if (!user) {
@@ -39,6 +40,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Posts />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/posts/:id"
+              element={
+                <ProtectedRoute>
+                  <PostDetail />
                 </ProtectedRoute>
               }
             />

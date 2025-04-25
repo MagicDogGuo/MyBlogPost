@@ -27,7 +27,7 @@ const PostList = ({ posts, onDelete, onEdit }) => {
     <Container sx={{ mt: 4 }}>
       <Box sx={{ mb: 3 }}>
         <Typography variant="h4" component="h1">
-          文章列表
+          Blog Posts
         </Typography>
       </Box>
 
@@ -40,7 +40,7 @@ const PostList = ({ posts, onDelete, onEdit }) => {
                   {post.title}
                 </Typography>
                 <Typography color="textSecondary" gutterBottom>
-                  作者: {post.author?.username || '未知作者'}
+                  Author: {post.author?.username || 'Unknown'}
                 </Typography>
                 <Typography variant="body1" component="p" sx={{ 
                   mb: 2,
@@ -52,7 +52,7 @@ const PostList = ({ posts, onDelete, onEdit }) => {
                   {post.content}
                 </Typography>
                 <Typography color="textSecondary" sx={{ mb: 1 }}>
-                  發布時間: {new Date(post.createdAt).toLocaleString()}
+                  Published: {new Date(post.createdAt).toLocaleString()}
                 </Typography>
                 {post.tags && post.tags.length > 0 && (
                   <Box sx={{ mt: 1 }}>
@@ -81,11 +81,11 @@ const PostList = ({ posts, onDelete, onEdit }) => {
                     color="primary" 
                     onClick={() => navigate(`/posts/${post._id}`)}
                   >
-                    閱讀更多
+                    Read More
                   </Button>
                   {isAdmin && (
                     <>
-                      <Tooltip title="編輯文章">
+                      <Tooltip title="Edit Post">
                         <IconButton 
                           size="small" 
                           color="primary" 
@@ -94,7 +94,7 @@ const PostList = ({ posts, onDelete, onEdit }) => {
                           <EditIcon />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="刪除文章">
+                      <Tooltip title="Delete Post">
                         <IconButton 
                           size="small" 
                           color="error" 

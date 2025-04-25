@@ -101,7 +101,7 @@ function Posts() {
       <div className="posts-content">
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
           <Typography variant="h4" component="h1" gutterBottom sx={{ color: 'black', margin: 0 }}>
-            部落格文章
+            Blog Posts
           </Typography>
           {isAdmin && (
             <Button
@@ -110,7 +110,7 @@ function Posts() {
               startIcon={<AddIcon />}
               onClick={() => setOpenDialog(true)}
             >
-              新增文章
+              New Post
             </Button>
           )}
         </Box>

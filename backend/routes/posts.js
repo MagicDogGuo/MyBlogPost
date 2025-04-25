@@ -71,7 +71,7 @@ router.put('/:id', auth, isAdmin, async (req, res) => {
     const post = await Post.findById(req.params.id);
     
     if (!post) {
-      return res.status(404).json({ message: '文章不存在' });
+      return res.status(404).json({ message: 'Post not found' });
     }
     
     post.title = title;
@@ -82,7 +82,7 @@ router.put('/:id', auth, isAdmin, async (req, res) => {
     await post.populate('author', 'username email role');
     res.json(post);
   } catch (error) {
-    res.status(500).json({ message: '更新文章失敗', error: error.message });
+    res.status(500).json({ message: 'Failed to update post', error: error.message });
   }
 });
 

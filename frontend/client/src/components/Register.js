@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import './Register.css';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -18,14 +19,14 @@ const Register = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    donateuser: 'no'  // 默認為非捐款用戶
+    donateuser: 'no'  // Default to non-donor user
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { register, user } = useAuth();
   const navigate = useNavigate();
 
-  // 如果用戶已登入，重定向到首頁
+  // If user is already logged in, redirect to home page
   useEffect(() => {
     if (user) {
       navigate('/');
@@ -45,134 +46,147 @@ const Register = () => {
     setError('');
     setLoading(true);
 
-    // 驗證密碼是否匹配
+    // Validate password match
     if (formData.password !== formData.confirmPassword) {
-      setError('密碼不匹配');
+      setError('Passwords do not match');
       setLoading(false);
       return;
     }
 
-    // 驗證密碼長度
+    // Validate password length
     if (formData.password.length < 6) {
-      setError('密碼長度必須至少為6個字符');
+      setError('Password must be at least 6 characters long');
       setLoading(false);
       return;
     }
 
     try {
-      console.log('提交註冊表單:', formData);
+      console.log('Submitting registration form:', formData);
       const result = await register(formData);
-      console.log('註冊結果:', result);
+      console.log('Registration result:', result);
       
       if (result.success) {
         navigate('/login', { 
-          state: { message: result.message || '註冊成功，請登入' } 
+          state: { message: result.message || 'Registration successful, please login' } 
         });
       } else {
         setError(result.message);
       }
     } catch (err) {
-      console.error('註冊錯誤:', err);
-      setError('註冊失敗，請稍後再試');
+      console.error('Registration error:', err);
+      setError('Registration failed, please try again later');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Paper
-          elevation={3}
+    <div className="register-page">
+      <Container component="main" maxWidth="xs">
+        <Box
           sx={{
-            padding: 4,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            width: '100%',
           }}
         >
-          <Typography component="h1" variant="h5">
-            註冊
-          </Typography>
-          {error && (
-            <Alert severity="error" sx={{ width: '100%', mt: 2 }}>
-              {error}
-            </Alert>
-          )}
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="username"
-              label="用戶名"
-              name="username"
-              autoComplete="username"
-              autoFocus
-              value={formData.username}
-              onChange={handleChange}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="電子郵件"
-              name="email"
-              autoComplete="email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="密碼"
-              type="password"
-              id="password"
-              autoComplete="new-password"
-              value={formData.password}
-              onChange={handleChange}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="confirmPassword"
-              label="確認密碼"
-              type="password"
-              id="confirmPassword"
-              autoComplete="new-password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              disabled={loading}
-            >
-              {loading ? '註冊中...' : '註冊'}
-            </Button>
-            <Box sx={{ textAlign: 'center' }}>
-              <Link component={RouterLink} to="/login" variant="body2">
-                已有帳號？立即登入
-              </Link>
+          <Paper
+            elevation={3}
+            className="register-paper"
+            sx={{
+              padding: 4,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              width: '100%',
+            }}
+          >
+            <Typography component="h1" variant="h5" sx={{ mb: 3, color: '#333' }}>
+              Register
+            </Typography>
+            {error && (
+              <Alert severity="error" sx={{ width: '100%', mt: 2 }}>
+                {error}
+              </Alert>
+            )}
+            <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="username"
+                label="Username"
+                name="username"
+                autoComplete="username"
+                autoFocus
+                value={formData.username}
+                onChange={handleChange}
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email"
+                name="email"
+                autoComplete="email"
+                value={formData.email}
+                onChange={handleChange}
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="new-password"
+                value={formData.password}
+                onChange={handleChange}
+                sx={{ mb: 2 }}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="confirmPassword"
+                label="Confirm Password"
+                type="password"
+                id="confirmPassword"
+                autoComplete="new-password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                sx={{ mb: 2 }}
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ 
+                  mt: 3, 
+                  mb: 2,
+                  backgroundColor: '#4CAF50',
+                  '&:hover': {
+                    backgroundColor: '#45a049',
+                  }
+                }}
+                disabled={loading}
+              >
+                {loading ? 'Registering...' : 'Register'}
+              </Button>
+              <Box sx={{ textAlign: 'center' }}>
+                <Link component={RouterLink} to="/login" variant="body2" sx={{ color: '#4CAF50' }}>
+                  Already have an account? Login
+                </Link>
+              </Box>
             </Box>
-          </Box>
-        </Paper>
-      </Box>
-    </Container>
+          </Paper>
+        </Box>
+      </Container>
+    </div>
   );
 };
 

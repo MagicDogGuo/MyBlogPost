@@ -68,12 +68,12 @@ const PostForm = ({ open, onClose, onSubmit, initialData }) => {
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>{initialData ? '編輯文章' : '新增文章'}</DialogTitle>
+      <DialogTitle>{initialData ? 'Edit Post' : 'New Post'}</DialogTitle>
       <form onSubmit={handleSubmit}>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <TextField
-              label="標題"
+              label="Title"
               name="title"
               value={formData.title}
               onChange={handleChange}
@@ -81,7 +81,7 @@ const PostForm = ({ open, onClose, onSubmit, initialData }) => {
               fullWidth
             />
             <TextField
-              label="內容"
+              label="Content"
               name="content"
               value={formData.content}
               onChange={handleChange}
@@ -91,11 +91,11 @@ const PostForm = ({ open, onClose, onSubmit, initialData }) => {
               fullWidth
             />
             <TextField
-              label="添加標籤"
+              label="Add Tags"
               value={tagInput}
               onChange={(e) => setTagInput(e.target.value)}
               onKeyPress={handleAddTag}
-              placeholder="按 Enter 添加標籤"
+              placeholder="Press Enter to add a tag"
               fullWidth
             />
             <Stack direction="row" spacing={1} flexWrap="wrap">
@@ -112,9 +112,9 @@ const PostForm = ({ open, onClose, onSubmit, initialData }) => {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose}>取消</Button>
+          <Button onClick={onClose}>Cancel</Button>
           <Button type="submit" variant="contained" color="primary">
-            {initialData ? '更新' : '發布'}
+            {initialData ? 'Update' : 'Publish'}
           </Button>
         </DialogActions>
       </form>

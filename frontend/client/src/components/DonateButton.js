@@ -19,7 +19,7 @@ const DonateButton = () => {
         },
       }}
     >
-      立即捐款
+      Donate Now
     </Button>
   );
 };
