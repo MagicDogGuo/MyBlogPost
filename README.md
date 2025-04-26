@@ -2,6 +2,10 @@
 
 A full-stack blog application built with React, Node.js, and MongoDB.
 
+## Demo
+
+Live Demo: [https://myblogpost-frontend-static-site.onrender.com/](https://myblogpost-frontend-static-site.onrender.com/)
+
 ## Features
 
 - User authentication (Login/Register)
