@@ -1,87 +1,156 @@
-# MyBlogPost
+# Blog Post Application
 
-A modern blog post application built with React and Node.js.
+A full-stack blog application built with React, Node.js, and MongoDB.
 
 ## Features
 
-- Create, read, update, and delete blog posts
-- Modern UI with Material-UI components
+- User authentication (Login/Register)
+- Role-based access control (Admin/User)
+- Blog post management
+  - Create, read, update, and delete posts
+  - Tag system
+  - Rich text content
 - Responsive design
-- RESTful API architecture
+- Modern UI with Material-UI
 
 ## Tech Stack
 
 ### Frontend
-- React.js
+- React
 - Material-UI
-- Axios for API calls
+- React Router
+- Axios
+- Context API for state management
 
 ### Backend
 - Node.js
-- Express.js
-- RESTful API
+- Express
+- MongoDB
+- JWT Authentication
+- Mongoose
 
-## Project Structure
-
-```
-myblogpost/
-├── backend/           # Node.js + Express API server
-│   ├── server.js     # Main server file
-│   └── package.json  # Backend dependencies
-├── frontend/         # React frontend application
-│   └── client/      # React app files
-└── package.json     # Project management
-```
-
-## Getting Started
-
-### Prerequisites
+## Prerequisites
 
 - Node.js (v14 or higher)
-- npm (v6 or higher)
+- MongoDB
+- npm or yarn
 
-### Installation
+## Installation
 
-1. Clone the repository:
+1. Clone the repository
 ```bash
-git clone [your-repository-url]
-cd myblogpost
+git clone https://github.com/your-username/blog-post.git
+cd blog-post
 ```
 
-2. Install dependencies for all parts:
+2. Install dependencies
 ```bash
-npm run install-all
+# Install backend dependencies
+cd backend
+npm install
+
+# Install frontend dependencies
+cd ../frontend/client
+npm install
 ```
 
-### Running the Application
+3. Environment Setup
 
-1. Development mode (runs both frontend and backend):
-```bash
-npm run dev
+Create `.env` file in the backend directory:
+```
+MONGODB_URI=your_mongodb_uri
+JWT_SECRET=your_jwt_secret
+PORT=5000
 ```
 
-2. Run backend only:
-```bash
-npm run backend
+Create `.env` file in the frontend/client directory:
+```
+REACT_APP_API_URL=http://localhost:5000/api
 ```
 
-3. Run frontend only:
+## Running the Application
+
+1. Start the backend server
 ```bash
-npm run frontend
+cd backend
+npm start
+```
+
+2. Start the frontend development server
+```bash
+cd frontend/client
+npm start
 ```
 
 The application will be available at:
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:5000
 
+## Project Structure
+
+```
+blog-post/
+├── backend/
+│   ├── models/
+│   ├── routes/
+│   ├── middleware/
+│   ├── scripts/
+│   └── app.js
+├── frontend/
+│   └── client/
+│       ├── public/
+│       ├── src/
+│       │   ├── components/
+│       │   ├── context/
+│       │   ├── config/
+│       │   └── App.js
+│       └── package.json
+└── README.md
+```
+
 ## API Endpoints
 
-- GET /api/posts - Get all posts
-- POST /api/posts - Create a new post
-- PUT /api/posts/:id - Update a post
-- DELETE /api/posts/:id - Delete a post
+### Authentication
+- POST /api/auth/register - Register a new user
+- POST /api/auth/login - Login user
+- GET /api/auth/me - Get current user info
 
+### Posts
+- GET /api/posts - Get all posts
+- GET /api/posts/:id - Get single post
+- POST /api/posts - Create new post (Admin only)
+- PUT /api/posts/:id - Update post (Admin only)
+- DELETE /api/posts/:id - Delete post (Admin only)
+
+## Default Users
+
+The application comes with two default users:
+
+1. Admin User
+   - Email: admin@example.com
+   - Password: admin123
+   - Role: admin
+
+2. Regular User
+   - Email: user@example.com
+   - Password: user123
+   - Role: user
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- Material-UI for the component library
+- MongoDB for the database
+- Express.js for the backend framework
+- React for the frontend framework
