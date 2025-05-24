@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import {
   AppBar,
@@ -6,18 +6,30 @@ import {
   Typography,
   Button,
   Box,
-  Container
+  Container,
+  IconButton,
+  Tooltip
 } from '@mui/material';
+import { 
+  Notifications as NotificationsIcon,
+  NotificationsActive as NotificationsActiveIcon
+} from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import DonateButton from './DonateButton';
+import SubscribeDialog from './SubscribeDialog';
 
 const Layout = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [subscribeDialogOpen, setSubscribeDialogOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const handleSubscribeClick = () => {
+    setSubscribeDialogOpen(true);
   };
 
   return (
@@ -32,7 +44,7 @@ const Layout = () => {
           >
             Sam's Blog
           </Typography>
-          <Box sx={{ display: 'flex', gap: 2 }}>
+          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
             {user ? (
               <>
                 <Button color="inherit" onClick={() => navigate('/posts')}>
@@ -56,6 +68,20 @@ const Layout = () => {
                 <DonateButton />
               </>
             )}
+            <Tooltip title="Subscribe to Newsletter">
+              <IconButton 
+                color="inherit" 
+                onClick={handleSubscribeClick}
+                sx={{ 
+                  '&:hover': { 
+                    transform: 'scale(1.1)',
+                    transition: 'transform 0.2s'
+                  }
+                }}
+              >
+                <NotificationsIcon />
+              </IconButton>
+            </Tooltip>
           </Box>
         </Toolbar>
       </AppBar>
@@ -80,6 +106,12 @@ const Layout = () => {
           </Typography>
         </Container>
       </Box>
+
+      {/* Subscribe Dialog */}
+      <SubscribeDialog 
+        open={subscribeDialogOpen} 
+        onClose={() => setSubscribeDialogOpen(false)} 
+      />
     </Box>
   );
 };
