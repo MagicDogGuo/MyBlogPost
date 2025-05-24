@@ -3,6 +3,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const Post = require('../models/Post');
 const { auth, isAdmin } = require('../middleware/auth');
+const User = require('../models/User');
 
 // 驗證中間件
 const authMiddleware = async (req, res, next) => {
@@ -20,162 +21,155 @@ const authMiddleware = async (req, res, next) => {
   }
 };
 
-// 獲取所有文章（公開）
+// 獲取所有文章
 router.get('/', async (req, res) => {
   try {
     const posts = await Post.find()
-      .populate('author', 'username email role')
+      .populate('author', 'username')
       .sort({ createdAt: -1 });
     res.json(posts);
   } catch (error) {
-    res.status(500).json({ message: '獲取文章失敗', error: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 
-// 獲取單篇文章（公開）
+// 獲取單篇文章
 router.get('/:id', async (req, res) => {
   try {
     const post = await Post.findById(req.params.id)
-      .populate('author', 'username email role');
+      .populate('author', 'username')
+      .populate('likes.user', 'username');
+    
     if (!post) {
       return res.status(404).json({ message: '文章不存在' });
     }
+    
     res.json(post);
   } catch (error) {
-    res.status(500).json({ message: '獲取文章失敗', error: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 
-// 創建文章（僅管理員）
-router.post('/', auth, isAdmin, async (req, res) => {
+// 創建文章
+router.post('/', auth, async (req, res) => {
   try {
-    const { title, content, tags } = req.body;
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: '只有管理員可以發布文章' });
+    }
+
+    const { title, content, imageUrl, tags } = req.body;
     const post = new Post({
       title,
       content,
-      author: req.user.userId,
+      author: req.user._id,
+      imageUrl,
       tags: tags || []
     });
+
     await post.save();
-    await post.populate('author', 'username email role');
     res.status(201).json(post);
   } catch (error) {
-    res.status(500).json({ message: '創建文章失敗', error: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 
-// 更新文章（僅管理員）
-router.put('/:id', auth, isAdmin, async (req, res) => {
+// 更新文章
+router.put('/:id', auth, async (req, res) => {
   try {
-    const { title, content, tags } = req.body;
-    const post = await Post.findById(req.params.id);
-    
-    if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: '只有管理員可以修改文章' });
     }
-    
-    post.title = title;
-    post.content = content;
-    if (tags) post.tags = tags;
-    await post.save();
-    
-    await post.populate('author', 'username email role');
-    res.json(post);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to update post', error: error.message });
-  }
-});
 
-// 刪除文章（僅管理員）
-router.delete('/:id', auth, isAdmin, async (req, res) => {
-  try {
+    const { title, content, imageUrl, tags } = req.body;
     const post = await Post.findById(req.params.id);
     
     if (!post) {
       return res.status(404).json({ message: '文章不存在' });
     }
-    
-    await post.deleteOne();
-    res.json({ message: '文章已刪除' });
+
+    if (title) post.title = title;
+    if (content) post.content = content;
+    if (imageUrl) post.imageUrl = imageUrl;
+    if (tags) post.tags = tags;
+
+    await post.save();
+    res.json(post);
   } catch (error) {
-    res.status(500).json({ message: '刪除文章失敗', error: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 
-// 點讚文章（需要登入）
+// 刪除文章
+router.delete('/:id', auth, async (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ message: '只有管理員可以刪除文章' });
+    }
+
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({ message: '文章不存在' });
+    }
+
+    await post.remove();
+    res.json({ message: '文章已刪除' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// 收藏/取消收藏文章
+router.post('/:id/favorite', auth, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({ message: '文章不存在' });
+    }
+
+    const user = await User.findById(req.user._id);
+    const favoriteIndex = user.favorites.indexOf(post._id);
+
+    if (favoriteIndex === -1) {
+      // 收藏文章
+      user.favorites.push(post._id);
+      await user.save();
+      res.json({ message: '文章已收藏' });
+    } else {
+      // 取消收藏
+      user.favorites.splice(favoriteIndex, 1);
+      await user.save();
+      res.json({ message: '已取消收藏' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// 按讚/取消按讚
 router.post('/:id/like', auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    
     if (!post) {
       return res.status(404).json({ message: '文章不存在' });
     }
-    
-    const likeIndex = post.likes.findIndex(like => like.user.toString() === req.user.userId);
-    
+
+    const likeIndex = post.likes.findIndex(
+      like => like.user.toString() === req.user._id.toString()
+    );
+
     if (likeIndex === -1) {
-      post.likes.push({ user: req.user.userId });
+      // 按讚
+      post.likes.push({ user: req.user._id });
+      await post.save();
+      res.json({ message: '已按讚' });
     } else {
+      // 取消按讚
       post.likes.splice(likeIndex, 1);
+      await post.save();
+      res.json({ message: '已取消按讚' });
     }
-    
-    await post.save();
-    await post.populate('author', 'username email role');
-    res.json(post);
   } catch (error) {
-    res.status(500).json({ message: '操作失敗', error: error.message });
-  }
-});
-
-// 評論文章（需要登入）
-router.post('/:id/comments', auth, async (req, res) => {
-  try {
-    const { content } = req.body;
-    const post = await Post.findById(req.params.id);
-    
-    if (!post) {
-      return res.status(404).json({ message: '文章不存在' });
-    }
-    
-    post.comments.push({
-      user: req.user.userId,
-      content,
-      authorUsername: req.user.username
-    });
-    
-    await post.save();
-    await post.populate('author', 'username email role');
-    res.json(post);
-  } catch (error) {
-    res.status(500).json({ message: '添加評論失敗', error: error.message });
-  }
-});
-
-// 刪除評論
-router.delete('/:postId/comments/:commentId', auth, async (req, res) => {
-  try {
-    const post = await Post.findById(req.params.postId);
-    
-    if (!post) {
-      return res.status(404).json({ message: '文章不存在' });
-    }
-    
-    const comment = post.comments.id(req.params.commentId);
-    
-    if (!comment) {
-      return res.status(404).json({ message: '評論不存在' });
-    }
-    
-    if (comment.user.toString() !== req.user.id && req.user.role !== 'admin') {
-      return res.status(403).json({ message: '無權刪除此評論' });
-    }
-    
-    comment.remove();
-    await post.save();
-    await post.populate('author', 'username email role');
-    res.json(post);
-  } catch (error) {
-    res.status(500).json({ message: '刪除評論失敗', error: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 
