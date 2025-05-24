@@ -18,11 +18,15 @@ import {
 import { 
   Edit as EditIcon, 
   Delete as DeleteIcon,
-  ArrowBack as ArrowBackIcon
+  ArrowBack as ArrowBackIcon,
+  Favorite as FavoriteIcon,
+  FavoriteBorder as FavoriteBorderIcon
 } from '@mui/icons-material';
 import axios from 'axios';
 import { API_ENDPOINTS } from '../config/api';
 import { useAuth } from '../context/AuthContext';
+import CommentList from './CommentList';
+import SubscribeForm from './SubscribeForm';
 import './PostDetail.css';
 
 const PostDetail = () => {
@@ -40,6 +44,8 @@ const PostDetail = () => {
   });
   const [tagInput, setTagInput] = useState('');
   const isAdmin = user?.role === 'admin';
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
 
   useEffect(() => {
     fetchPost();
@@ -54,9 +60,11 @@ const PostDetail = () => {
         content: response.data.content,
         tags: response.data.tags || []
       });
+      setIsLiked(response.data.likes?.includes(user?._id) || false);
+      setLikeCount(response.data.likes?.length || 0);
       setLoading(false);
     } catch (error) {
-      setError('Failed to load post');
+      setError('Failed to fetch post');
       setLoading(false);
     }
   };
@@ -138,6 +146,30 @@ const PostDetail = () => {
     }
   };
 
+  const handleLike = async () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        API_ENDPOINTS.POSTS.LIKE(id),
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      setIsLiked(response.data.liked);
+      setLikeCount(response.data.likeCount);
+    } catch (error) {
+      setError('Operation failed, please try again later');
+    }
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
   if (!post) return <div>Post not found</div>;
@@ -196,10 +228,31 @@ const PostDetail = () => {
               </Box>
             )}
 
+            <Box sx={{ display: 'flex', alignItems: 'center', mt: 3, mb: 2 }}>
+              <Tooltip title={isLiked ? "Unlike" : "Like"}>
+                <IconButton onClick={handleLike} color={isLiked ? "primary" : "default"}>
+                  {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                </IconButton>
+              </Tooltip>
+              <Typography variant="body2" color="textSecondary" sx={{ ml: 1 }}>
+                {likeCount} {likeCount === 1 ? 'like' : 'likes'}
+              </Typography>
+            </Box>
+
             <Typography variant="body1" component="div" sx={{ mb: 4 }}>
               {post.content}
             </Typography>
           </Paper>
+
+          {/* Comments section */}
+          <Box sx={{ mt: 4 }}>
+            <CommentList postId={id} />
+          </Box>
+
+          {/* Newsletter subscription */}
+          <Box sx={{ mt: 4 }}>
+            <SubscribeForm />
+          </Box>
         </Box>
       </Container>
 
