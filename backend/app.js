@@ -4,6 +4,8 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const authRoutes = require('./routes/auth');
 const postRoutes = require('./routes/posts');
+const commentRoutes = require('./routes/comments');
+const subscriberRoutes = require('./routes/subscribers');
 const initData = require('./scripts/initData');
 
 dotenv.config();
@@ -34,6 +36,8 @@ app.use(express.json());
 // 路由
 app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);
+app.use('/api/comments', commentRoutes);
+app.use('/api/subscribers', subscriberRoutes);
 
 // 錯誤處理
 app.use((err, req, res, next) => {
@@ -41,7 +45,14 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Server error' });
 });
 
+// 404 處理
+app.use((req, res) => {
+  res.status(404).json({ message: '找不到請求的資源' });
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`伺服器運行在端口 ${PORT}`);
-}); 
+});
+
+module.exports = app; 

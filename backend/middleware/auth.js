@@ -6,7 +6,7 @@ const auth = (req, res, next) => {
     const token = req.header('Authorization')?.replace('Bearer ', '');
     
     if (!token) {
-      return res.status(401).json({ message: 'Please provide an authentication token' });
+      return res.status(401).json({ message: '請提供認證令牌' });
     }
 
     // 驗證 token
@@ -14,22 +14,22 @@ const auth = (req, res, next) => {
     
     // 將用戶信息添加到請求對象
     req.user = {
-      userId: decoded.userId,
+      _id: decoded.userId,
       email: decoded.email,
       role: decoded.role,
-      name: decoded.name
+      username: decoded.name
     };
     
     next();
   } catch (error) {
-    res.status(401).json({ message: 'Authentication failed' });
+    res.status(401).json({ message: '認證失敗' });
   }
 };
 
 // Middleware to check if user is admin
 const isAdmin = (req, res, next) => {
   if (req.user.role !== 'admin') {
-    return res.status(403).json({ message: 'Admin privileges required' });
+    return res.status(403).json({ message: '需要管理員權限' });
   }
   next();
 };
