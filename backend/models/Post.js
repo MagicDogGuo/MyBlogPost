@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const postSchema = new mongoose.Schema({
   title: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   content: {
     type: String,
@@ -14,16 +15,13 @@ const postSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
+  imageUrl: {
+    type: String,
+    trim: true
   },
   tags: [{
-    type: String
+    type: String,
+    trim: true
   }],
   likes: [{
     user: {
@@ -31,17 +29,26 @@ const postSchema = new mongoose.Schema({
       ref: 'User'
     }
   }],
-  comments: [{
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User'
-    },
-    content: String,
-    createdAt: {
-      type: Date,
-      default: Date.now
-    }
-  }]
+  commentCount: {
+    type: Number,
+    default: 0
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+// 更新 updatedAt
+postSchema.pre('save', function(next) {
+  if (this.isModified()) {
+    this.updatedAt = Date.now();
+  }
+  next();
 });
 
 module.exports = mongoose.model('Post', postSchema); 

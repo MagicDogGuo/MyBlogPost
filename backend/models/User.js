@@ -4,12 +4,15 @@ const bcrypt = require('bcryptjs');
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    trim: true,
+    lowercase: true
   },
   password: {
     type: String,
@@ -25,7 +28,15 @@ const userSchema = new mongoose.Schema({
     enum: ['yes', 'no'],
     default: 'no'
   },
+  favorites: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Post'
+  }],
   createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
     type: Date,
     default: Date.now
   }
@@ -35,28 +46,24 @@ const userSchema = new mongoose.Schema({
 userSchema.pre('save', async function(next) {
   try {
     if (this.isModified('password')) {
-      console.log('正在加密密碼...');
       const salt = await bcrypt.genSalt(10);
-      const hash = await bcrypt.hash(this.password, salt);
-      this.password = hash;
-      console.log('密碼加密完成');
+      this.password = await bcrypt.hash(this.password, salt);
+    }
+    // 更新 updatedAt
+    if (this.isModified()) {
+      this.updatedAt = Date.now();
     }
     next();
   } catch (error) {
-    console.error('密碼加密錯誤:', error);
     next(error);
   }
 });
 
-// 添加密碼比較方法
+// 密碼比較方法
 userSchema.methods.comparePassword = async function(candidatePassword) {
   try {
-    console.log('正在比較密碼...');
-    const isMatch = await bcrypt.compare(candidatePassword, this.password);
-    console.log('密碼比較結果:', isMatch);
-    return isMatch;
+    return await bcrypt.compare(candidatePassword, this.password);
   } catch (error) {
-    console.error('密碼比較錯誤:', error);
     throw error;
   }
 };
