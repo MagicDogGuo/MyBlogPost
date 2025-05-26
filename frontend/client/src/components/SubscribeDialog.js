@@ -12,12 +12,24 @@ import {
 } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
+import { useAuth } from '../context/AuthContext';
 
 const SubscribeDialog = ({ open, onClose }) => {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { user } = useAuth();
+
+  React.useEffect(() => {
+    if (open && user && user.email) {
+      setEmail(user.email);
+    }
+    if (!open) {
+      setEmail('');
+    }
+  }, [open, user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,10 +38,9 @@ const SubscribeDialog = ({ open, onClose }) => {
     setMessage('');
 
     try {
-      const response = await axios.post('/api/subscribers', { email });
+      const response = await axios.post(API_ENDPOINTS.SUBSCRIBERS.SUBSCRIBE, { email });
       setMessage(response.data.message);
       setEmail('');
-      // Close dialog after 2 seconds on success
       setTimeout(() => {
         onClose();
         setMessage('');
