@@ -10,14 +10,8 @@ const DonateButton = () => {
   return (
     <Button
       variant="contained"
-      color="primary"
+      color="Button"
       onClick={handleClick}
-      sx={{
-        backgroundColor: '#4CAF50',
-        '&:hover': {
-          backgroundColor: '#45a049',
-        },
-      }}
     >
       Donate Now
     </Button>

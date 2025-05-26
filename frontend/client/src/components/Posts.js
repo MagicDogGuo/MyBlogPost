@@ -106,7 +106,7 @@ function Posts() {
             <Box sx={{ mb: 2 }}>
               <Button
                 variant="contained"
-                color="primary"
+                color="Button"
                 startIcon={<AddIcon />}
                 onClick={() => setOpenDialog(true)}
               >

@@ -89,7 +89,7 @@ const PostListItem = ({ post, onDelete, onEdit, isAdmin, user }) => {
 
   return (
     <Card sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, mb: 3, boxShadow: 'none', borderBottom: '1px solid #e0e0e0', borderRadius:0, pb:2 }}>
-      <Box sx={{ flex: 1, p: { xs: 1, sm: 0 }, pr: {sm: 2} }}>
+      <Box sx={{ flex: 1, p: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
           <Avatar 
             sx={{ width: 24, height: 24, mr: 1, fontSize: '0.75rem' }} 

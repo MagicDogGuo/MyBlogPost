@@ -247,6 +247,7 @@ const PostDetail = () => {
             startIcon={<ArrowBackIcon />}
             onClick={() => navigate('/posts')}
             className="back-button"
+            color="Button"
           >
             Back to Posts
           </Button>
