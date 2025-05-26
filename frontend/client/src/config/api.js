@@ -17,7 +17,8 @@ export const API_ENDPOINTS = {
     UPDATE: (id) => `${API_BASE_URL}/posts/${id}`,
     DELETE: (id) => `${API_BASE_URL}/posts/${id}`,
     LIKE: (id) => `${API_BASE_URL}/posts/${id}/like`,
-    FAVORITE: (id) => `${API_BASE_URL}/posts/${id}/favorite`
+    FAVORITE: (id) => `${API_BASE_URL}/posts/${id}/favorite`,
+    MY_FAVORITES: `${API_BASE_URL}/posts/me/favorites`
   },
 
   // Comments related

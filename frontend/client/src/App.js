@@ -7,6 +7,7 @@ import Posts from './components/Posts';
 import PostDetail from './components/PostDetail';
 import Login from './components/Login';
 import Register from './components/Register';
+import FavoritePostsPage from './pages/FavoritePostsPage';
 
 // 受保護的路由組件
 const ProtectedRoute = ({ children }) => {
@@ -48,6 +49,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <PostDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/favorites"
+              element={
+                <ProtectedRoute>
+                  <FavoritePostsPage />
                 </ProtectedRoute>
               }
             />

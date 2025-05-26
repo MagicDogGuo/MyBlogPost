@@ -50,6 +50,9 @@ const Layout = () => {
                 <Button color="inherit" onClick={() => navigate('/posts')}>
                   Posts
                 </Button>
+                <Button color="inherit" onClick={() => navigate('/favorites')}>
+                  My Favorites
+                </Button>
                 {user.role !== 'admin' && (  // Only show donate button for non-admin users
                   <DonateButton />
                 )}

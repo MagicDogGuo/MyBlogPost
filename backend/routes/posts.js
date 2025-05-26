@@ -173,4 +173,26 @@ router.post('/:id/like', auth, async (req, res) => {
   }
 });
 
+// GET 獲取當前用戶點讚 (收藏) 的所有帖子
+router.get('/me/favorites', auth, async (req, res) => {
+  try {
+    // req.user._id 應該由 auth 中間件從 token 解析後設置
+    const userId = req.user._id; 
+
+    if (!userId) {
+      return res.status(401).json({ message: 'User not authorized or user ID is invalid' });
+    }
+
+    // 查找所有 likes 數組中其 'user' 字段等於 userId 的帖子
+    const favoritePosts = await Post.find({ 'likes.user': userId })
+                                    .populate('author', 'username email') // 填充作者的用戶名和郵箱
+                                    .sort({ createdAt: -1 });     // 按創建時間降序排列
+
+    res.json(favoritePosts);
+  } catch (error) {
+    console.error('Error fetching favorite posts:', error);
+    res.status(500).json({ message: 'Failed to fetch favorite posts. Please try again later.' });
+  }
+});
+
 module.exports = router; 
