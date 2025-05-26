@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Box, Button } from '@mui/material';
+import { Container, Typography, Box, Button, Grid } from '@mui/material';
 import PostList from './PostList';
 import PostForm from './PostForm';
+import StaffPicks from './StaffPicks';
+import RecommendedTopics from './RecommendedTopics';
 import axios from 'axios';
 import './Posts.css';
 import { Link, useNavigate } from 'react-router-dom';
@@ -97,26 +99,37 @@ function Posts() {
   };
 
   return (
-    <div className="posts-container">
-      <div className="posts-content">
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-
+    <Container maxWidth="lg" sx={{ mt: 4 }}>
+      <Grid container spacing={4}>
+        <Grid item xs={12} md={8}>
           {isAdmin && (
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<AddIcon />}
-              onClick={() => setOpenDialog(true)}
-            >
-              New Post
-            </Button>
+            <Box sx={{ mb: 2 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<AddIcon />}
+                onClick={() => setOpenDialog(true)}
+              >
+                New Post
+              </Button>
+            </Box>
           )}
-        </Box>
-        <PostList
-          posts={posts}
-          onDelete={handleDeletePost}
-          onEdit={handleEditPost}
-        />
+          <PostList
+            posts={posts}
+            onDelete={handleDeletePost}
+            onEdit={handleEditPost}
+          />
+        </Grid>
+
+        <Grid item xs={12} md={4}>
+          <Box sx={{ position: 'sticky', top: '80px' }}>
+            <StaffPicks />
+            <Box sx={{mt:3}}>
+              <RecommendedTopics />
+            </Box>
+          </Box>
+        </Grid>
+
         {isAdmin && (
           <PostForm
             open={openDialog}
@@ -128,8 +141,8 @@ function Posts() {
             initialData={editingPost}
           />
         )}
-      </div>
-    </div>
+      </Grid>
+    </Container>
   );
 }
 
