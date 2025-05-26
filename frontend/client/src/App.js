@@ -9,6 +9,7 @@ import Login from './components/Login';
 import Register from './components/Register';
 import FavoritePostsPage from './pages/FavoritePostsPage';
 import UserProfilePage from './pages/UserProfilePage';
+import TagPostsPage from './pages/TagPostsPage';
 
 // 受保護的路由組件
 const ProtectedRoute = ({ children }) => {
@@ -67,6 +68,12 @@ function App() {
                 <ProtectedRoute>
                   <UserProfilePage />
                 </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/tags/:tagName"
+              element={
+                <TagPostsPage />
               }
             />
           </Route>

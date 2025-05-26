@@ -19,7 +19,9 @@ export const API_ENDPOINTS = {
     DELETE: (id) => `${API_BASE_URL}/posts/${id}`,
     LIKE: (id) => `${API_BASE_URL}/posts/${id}/like`,
     FAVORITE: (id) => `${API_BASE_URL}/posts/${id}/favorite`,
-    MY_FAVORITES: `${API_BASE_URL}/posts/me/favorites`
+    MY_FAVORITES: `${API_BASE_URL}/posts/me/favorites`,
+    LIST_BY_TAG: (tagName) => `${API_BASE_URL}/posts/tag/${tagName}`,
+    LIST_UNIQUE_TAGS: `${API_BASE_URL}/posts/tags/unique`
   },
 
   // Comments related

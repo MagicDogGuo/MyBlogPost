@@ -195,4 +195,40 @@ router.get('/me/favorites', auth, async (req, res) => {
   }
 });
 
+// 新增：根據標籤名稱獲取文章
+router.get('/tag/:tagName', async (req, res) => {
+  try {
+    const tagName = req.params.tagName;
+    // 查找 tags 數組中包含 tagName 的文章
+    // 假設 tagName 在數據庫中存儲時與傳入的大小寫一致
+    const posts = await Post.find({ tags: tagName })
+      .populate('author', 'username')
+      .sort({ createdAt: -1 });
+
+    if (!posts || posts.length === 0) {
+      // 雖然找不到文章不算嚴格意義上的錯誤，但可以返回空數組或特定消息
+      // return res.status(404).json({ message: `No posts found with tag: ${tagName}` });
+      return res.json([]); // 直接返回空數組更常見
+    }
+
+    res.json(posts);
+  } catch (error) {
+    console.error(`Error fetching posts by tag ${req.params.tagName}:`, error);
+    res.status(500).json({ message: 'Failed to fetch posts by tag. Please try again later.' });
+  }
+});
+
+// 新增：獲取所有唯一的標籤
+router.get('/tags/unique', async (req, res) => {
+  try {
+    const uniqueTags = await Post.distinct('tags');
+    // distinct() 返回一個包含所有不重複標籤的數組
+    // 例如: ["Tech", "Health", "AI", "Science"]
+    res.json(uniqueTags.sort()); // 按字母順序排序返回
+  } catch (error) {
+    console.error('Error fetching unique tags:', error);
+    res.status(500).json({ message: 'Failed to fetch unique tags. Please try again later.' });
+  }
+});
+
 module.exports = router; 

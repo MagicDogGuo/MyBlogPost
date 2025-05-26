@@ -9,7 +9,7 @@ import { Link as RouterLink } from 'react-router-dom'; // 假設點擊標籤可�
 
 // 佔位數據
 const placeholderTopics = [
-  'Data Science', 'Self Improvement', 'Writing', 'Relationships', 'Cryptocurrency', 'Politics', 'Technology', 'Productivity'
+  'Finance', 'Blockchain', 'AI', 'Business', 'Sustainability', 'Lifestyle', 'Technology', 'Environment'
 ];
 
 const RecommendedTopics = () => {
@@ -27,7 +27,7 @@ const RecommendedTopics = () => {
             key={topic} 
             label={topic} 
             component={RouterLink} 
-            to={`/topics/${topic.toLowerCase().replace(/\s+/g, '-')}`} // 生成 topic 鏈接
+            to={`/tags/${encodeURIComponent(topic)}`}
             clickable 
             sx={{ 
               backgroundColor: '#e9ecef', 
