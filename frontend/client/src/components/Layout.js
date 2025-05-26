@@ -8,11 +8,19 @@ import {
   Box,
   Container,
   IconButton,
-  Tooltip
+  Tooltip,
+  Menu,
+  MenuItem,
+  Avatar,
+  ListItemIcon,
+  Divider
 } from '@mui/material';
 import { 
   Notifications as NotificationsIcon,
-  NotificationsActive as NotificationsActiveIcon
+  NotificationsActive as NotificationsActiveIcon,
+  AccountCircle as AccountCircleIcon,
+  Logout as LogoutIcon,
+  Favorite as FavoriteIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import DonateButton from './DonateButton';
@@ -22,14 +30,30 @@ const Layout = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [subscribeDialogOpen, setSubscribeDialogOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const menuOpen = Boolean(anchorEl);
 
   const handleLogout = () => {
+    handleMenuClose();
     logout();
     navigate('/login');
   };
 
   const handleSubscribeClick = () => {
     setSubscribeDialogOpen(true);
+  };
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleProfileNavigate = () => {
+    navigate('/profile');
+    handleMenuClose();
   };
 
   return (
@@ -44,24 +68,89 @@ const Layout = () => {
           >
             Sam's Blog
           </Typography>
-          <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
             {user ? (
               <>
                 <Button color="inherit" onClick={() => navigate('/posts')}>
                   Posts
                 </Button>
-                <Button color="inherit" onClick={() => navigate('/favorites')}>
-                  My Favorites
-                </Button>
-                <Button color="inherit" onClick={() => navigate('/profile')}>
-                  My Profile
-                </Button>
-                {user.role !== 'admin' && (  // Only show donate button for non-admin users
+                {user.role !== 'admin' && (
                   <DonateButton />
                 )}
-                <Button color="inherit" onClick={handleLogout}>
-                  Logout
-                </Button>
+                <Tooltip title="Account settings">
+                  <IconButton
+                    onClick={handleMenuOpen}
+                    size="small"
+                    sx={{ ml: 1, p: 0.5 }}
+                    aria-controls={menuOpen ? 'account-menu' : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={menuOpen ? 'true' : undefined}
+                    color="inherit"
+                  >
+                    {user.username ? (
+                      <Avatar sx={{ width: 32, height: 32, fontSize: '0.875rem' }}>
+                        {user.username.charAt(0).toUpperCase()}
+                      </Avatar>
+                    ) : (
+                      <AccountCircleIcon sx={{ width: 32, height: 32 }} />
+                    )}
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  anchorEl={anchorEl}
+                  id="account-menu"
+                  open={menuOpen}
+                  onClose={handleMenuClose}
+                  onClick={handleMenuClose} 
+                  PaperProps={{
+                    elevation: 0,
+                    sx: {
+                      overflow: 'visible',
+                      filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                      mt: 1.5,
+                      '& .MuiAvatar-root': {
+                        width: 32,
+                        height: 32,
+                        ml: -0.5,
+                        mr: 1,
+                      },
+                      '&::before': {
+                        content: '""',
+                        display: 'block',
+                        position: 'absolute',
+                        top: 0,
+                        right: 14,
+                        width: 10,
+                        height: 10,
+                        bgcolor: 'background.paper',
+                        transform: 'translateY(-50%) rotate(45deg)',
+                        zIndex: 0,
+                      },
+                    },
+                  }}
+                  transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                  anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                >
+                  <MenuItem onClick={handleProfileNavigate}>
+                    <Avatar sx={{ width: 28, height: 28, mr:1, fontSize: '0.875rem' }}>
+                       {user.username ? user.username.charAt(0).toUpperCase() : <AccountCircleIcon fontSize="small"/>}
+                    </Avatar> 
+                    My Profile
+                  </MenuItem>
+                  <MenuItem onClick={() => { navigate('/favorites'); handleMenuClose(); }}>
+                    <ListItemIcon>
+                      <FavoriteIcon fontSize="small" />
+                    </ListItemIcon>
+                    My Favorites
+                  </MenuItem>
+                  <Divider />
+                  <MenuItem onClick={handleLogout}>
+                    <ListItemIcon>
+                       <LogoutIcon fontSize="small" />
+                    </ListItemIcon>
+                    Logout
+                  </MenuItem>
+                </Menu>
               </>
             ) : (
               <>
