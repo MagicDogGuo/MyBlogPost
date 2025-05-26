@@ -46,25 +46,72 @@ const PostDetail = () => {
   const isAdmin = user?.role === 'admin';
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const [isLiking, setIsLiking] = useState(false);
 
   useEffect(() => {
     fetchPost();
-  }, [id]);
+  }, [id, user]);
+
+  useEffect(() => {
+    console.log(`[PostDetail Diagnostics - Heart Color] isLiked state changed to: ${isLiked}. Heart should now be ${isLiked ? 'RED' : 'DEFAULT'}.`);
+  }, [isLiked]);
 
   const fetchPost = async () => {
+    console.log('[PostDetail Diagnostics] fetchPost function called.');
+    setLoading(true);
+    setError('');
     try {
-      const response = await axios.get(API_ENDPOINTS.POSTS.DETAIL(id));
-      setPost(response.data);
+      const apiUrl = API_ENDPOINTS.POSTS.DETAIL(id);
+      console.log(`[PostDetail Diagnostics] Attempting to fetch post from: ${apiUrl}`);
+      const response = await axios.get(apiUrl);
+      const postData = response.data;
+      
+      console.log('[PostDetail Diagnostics] Fetched post data:', JSON.stringify(postData));
+
+      setPost(postData);
       setEditForm({
-        title: response.data.title,
-        content: response.data.content,
-        tags: response.data.tags || []
+        title: postData.title,
+        content: postData.content,
+        tags: postData.tags || []
       });
-      setIsLiked(response.data.likes?.includes(user?._id) || false);
-      setLikeCount(response.data.likes?.length || 0);
+
+      console.log('[PostDetail Diagnostics] Initializing like status. User:', JSON.stringify(user));
+      console.log('[PostDetail Diagnostics] Post data for likes:', JSON.stringify(postData?.likes));
+
+      if (user && user.id && postData && postData.likes) {
+        const currentUserIdStr = String(user.id);
+        const likesArray = Array.isArray(postData.likes) ? postData.likes : [];
+        let likedByCurrentUser = false;
+        console.log(`[PostDetail Diagnostics] Current User ID: ${currentUserIdStr}, Likes Array on post:`, JSON.stringify(likesArray));
+
+        for (const likeItem of likesArray) {
+          if (likeItem && typeof likeItem === 'object' && 
+              likeItem.user && typeof likeItem.user === 'object' && 
+              likeItem.user._id !== undefined) {
+            const likedUserId = String(likeItem.user._id);
+            console.log(`[PostDetail Diagnostics] Comparing: Item User ID (from likeItem.user._id): ${likedUserId}, Current User ID: ${currentUserIdStr}`);
+            if (likedUserId === currentUserIdStr) {
+              likedByCurrentUser = true;
+              console.log(`[PostDetail Diagnostics] Match found for user ${currentUserIdStr} in post ${postData._id}`);
+              break;
+            }
+          } else {
+            console.warn('[PostDetail Diagnostics] Encountered likeItem with unexpected structure:', JSON.stringify(likeItem));
+          }
+        }
+        setIsLiked(likedByCurrentUser);
+        setLikeCount(likesArray.length);
+        console.log(`[PostDetail Diagnostics] Initialized isLiked: ${likedByCurrentUser}, likeCount: ${likesArray.length}`);
+      } else {
+        setIsLiked(false);
+        const currentLikesLength = postData.likes ? postData.likes.length : 0;
+        setLikeCount(currentLikesLength);
+        console.log(`[PostDetail Diagnostics] User or post data for likes missing or invalid. Initialized isLiked: false, likeCount: ${currentLikesLength}`);
+      }
       setLoading(false);
     } catch (error) {
-      setError('Failed to fetch post');
+      console.error("Failed to fetch post:", error.response ? error.response.data : error.message);
+      setError('Failed to fetch post. Please try refreshing the page.');
       setLoading(false);
     }
   };
@@ -151,6 +198,17 @@ const PostDetail = () => {
       navigate('/login');
       return;
     }
+    if (isLiking) {
+      return;
+    }
+
+    const originalIsLiked = isLiked;
+    const originalLikeCount = likeCount;
+
+    setIsLiking(true);
+    // Optimistic update
+    setIsLiked(!originalIsLiked);
+    setLikeCount(prevCount => !originalIsLiked ? prevCount + 1 : Math.max(0, prevCount - 1));
 
     try {
       const token = localStorage.getItem('token');
@@ -158,15 +216,22 @@ const PostDetail = () => {
         API_ENDPOINTS.POSTS.LIKE(id),
         {},
         {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+          headers: { Authorization: `Bearer ${token}` }
         }
       );
-      setIsLiked(response.data.liked);
-      setLikeCount(response.data.likeCount);
+      
+      if (response.data && response.data.likeCount !== undefined) {
+        setLikeCount(response.data.likeCount);
+      }
+      // isLiked state relies on optimistic update
     } catch (error) {
+      console.error('[PostDetail Diagnostics] Error in handleLike:', error.response ? error.response.data : error.message);
       setError('Operation failed, please try again later');
+      // Rollback optimistic update
+      setIsLiked(originalIsLiked);
+      setLikeCount(originalLikeCount);
+    } finally {
+      setIsLiking(false);
     }
   };
 
@@ -230,11 +295,34 @@ const PostDetail = () => {
 
             <Box sx={{ display: 'flex', alignItems: 'center', mt: 3, mb: 2 }}>
               <Tooltip title={isLiked ? "Unlike" : "Like"}>
-                <IconButton onClick={handleLike} color={isLiked ? "primary" : "default"}>
-                  {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-                </IconButton>
+                <span style={{ display: 'inline-flex', alignItems: 'center' }}> 
+                  <IconButton 
+                    onClick={handleLike} 
+                    disabled={isLiking}
+                    sx={{
+                      color: isLiked ? '#ff4081' : 'inherit',
+                      transition: 'all 0.2s ease-in-out',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 64, 129, 0.08)'
+                      },
+                      '&:disabled': {
+                        opacity: 0.7
+                      }
+                    }}
+                  >
+                    {isLiked ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                  </IconButton>
+                </span>
               </Tooltip>
-              <Typography variant="body2" color="textSecondary" sx={{ ml: 1 }}>
+              <Typography 
+                variant="body2" 
+                sx={{ 
+                  ml: 1, 
+                  color: isLiked ? '#ff4081' : 'text.secondary',
+                  fontWeight: isLiked ? 'bold' : 'normal',
+                  transition: 'all 0.2s ease-in-out'
+                }}
+              >
                 {likeCount} {likeCount === 1 ? 'like' : 'likes'}
               </Typography>
             </Box>
