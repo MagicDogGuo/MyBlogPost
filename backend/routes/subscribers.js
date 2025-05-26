@@ -12,18 +12,18 @@ router.post('/', async function(req, res) {
     const existingSubscriber = await Subscriber.findOne({ email });
     if (existingSubscriber) {
       if (existingSubscriber.status === 'active') {
-        return res.status(400).json({ message: '此郵箱已經訂閱' });
+        return res.status(400).json({ message: 'This mailbox is subscribed' });
       } else {
         // 重新訂閱
         existingSubscriber.status = 'active';
         await existingSubscriber.save();
-        return res.json({ message: '重新訂閱成功' });
+        return res.json({ message: 'Re-subscribed successfully' });
       }
     }
 
     const subscriber = new Subscriber({ email });
     await subscriber.save();
-    res.status(201).json({ message: '訂閱成功' });
+    res.status(201).json({ message: 'Subscribed successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -34,12 +34,12 @@ router.put('/unsubscribe/:id', async function(req, res) {
   try {
     const subscriber = await Subscriber.findById(req.params.id);
     if (!subscriber) {
-      return res.status(404).json({ message: '訂閱者不存在' });
+      return res.status(404).json({ message: 'Subscriber not found' });
     }
 
     subscriber.status = 'unsubscribed';
     await subscriber.save();
-    res.json({ message: '已取消訂閱' });
+    res.json({ message: 'Unsubscribed successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -49,7 +49,7 @@ router.put('/unsubscribe/:id', async function(req, res) {
 router.get('/', auth, async function(req, res) {
   try {
     if (req.user.role !== 'admin') {
-      return res.status(403).json({ message: '沒有權限訪問此資源' });
+      return res.status(403).json({ message: 'No permission to access this resource' });
     }
 
     const subscribers = await Subscriber.find()
@@ -64,13 +64,13 @@ router.get('/', auth, async function(req, res) {
 router.put('/:id', auth, async function(req, res) {
   try {
     if (req.user.role !== 'admin') {
-      return res.status(403).json({ message: '沒有權限訪問此資源' });
+      return res.status(403).json({ message: 'No permission to access this resource' });
     }
 
     const { status } = req.body;
     const subscriber = await Subscriber.findById(req.params.id);
     if (!subscriber) {
-      return res.status(404).json({ message: '訂閱者不存在' });
+      return res.status(404).json({ message: 'Subscriber not found' });
     }
 
     subscriber.status = status;
