@@ -15,25 +15,36 @@ const TagPostsPage = () => {
   const [decodedTagName, setDecodedTagName] = useState(''); // 用於顯示解碼後的標籤名
 
   const [uniqueTags, setUniqueTags] = useState([]);
+  const [displayedUniqueTags, setDisplayedUniqueTags] = useState([]);
   const [loadingTags, setLoadingTags] = useState(true);
   const [errorTags, setErrorTags] = useState(null);
 
-  // Effect to fetch unique tags
+  // Effect to fetch unique tags and select a subset for display
   useEffect(() => {
-    const fetchUniqueTags = async () => {
+    const fetchAndProcessUniqueTags = async () => {
       setLoadingTags(true);
       setErrorTags(null);
       try {
         const response = await axios.get(API_ENDPOINTS.POSTS.LIST_UNIQUE_TAGS);
-        setUniqueTags(response.data || []);
+        const allTags = response.data || [];
+        setUniqueTags(allTags); // Store all tags, might be useful elsewhere or for debugging
+
+        if (allTags.length > 0) {
+          const shuffledTags = [...allTags].sort(() => 0.5 - Math.random());
+          setDisplayedUniqueTags(shuffledTags.slice(0, 5)); // Select first 5 after shuffling
+        } else {
+          setDisplayedUniqueTags([]);
+        }
+
       } catch (err) {
         console.error("Error fetching unique tags:", err);
         setErrorTags("Failed to load topics.");
+        setDisplayedUniqueTags([]); // Clear on error as well
       } finally {
         setLoadingTags(false);
       }
     };
-    fetchUniqueTags();
+    fetchAndProcessUniqueTags();
   }, []);
 
   // Effect to fetch posts for the current tag
@@ -86,7 +97,7 @@ const TagPostsPage = () => {
           clickable
           sx={{ mr: 1 }}
         />
-        {uniqueTags.map((tag) => (
+        {displayedUniqueTags.map((tag) => (
           <Chip
             key={tag}
             label={tag}
