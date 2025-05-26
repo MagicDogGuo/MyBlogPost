@@ -34,7 +34,7 @@ router.post('/', auth, async function(req, res) {
       postId,
       user: req.user._id,
       content,
-      isPublic: req.user.role === 'admin' ? true : false
+      isPublic: true
     });
 
     await comment.save();
@@ -83,10 +83,16 @@ router.delete('/:id', auth, async function(req, res) {
       return res.status(403).json({ message: '沒有權限刪除此評論' });
     }
 
-    await comment.remove();
+    const deletedComment = await Comment.findByIdAndDelete(req.params.id);
+
+    if (!deletedComment) {
+      return res.status(404).json({ message: '評論不存在或已被刪除' });
+    }
+    
     res.json({ message: '評論已刪除' });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('[BACKEND ERROR - Delete Comment Route] Error deleting comment:', error); 
+    res.status(500).json({ message: error.message || '刪除評論時發生內部伺服器錯誤' });
   }
 });
 

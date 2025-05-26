@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import './CommentList.css';
+import { API_ENDPOINTS } from '../config/api';
 
 const CommentList = ({ postId }) => {
   const [comments, setComments] = useState([]);
@@ -12,9 +13,12 @@ const CommentList = ({ postId }) => {
   // Fetch comments
   const fetchComments = async () => {
     try {
-      const response = await axios.get(`/api/comments/post/${postId}`);
+      console.log(`[CommentList Diagnostics] Fetching comments for postId: ${postId}`);
+      const response = await axios.get(API_ENDPOINTS.COMMENTS.LIST(postId));
+      console.log('[CommentList Diagnostics] Fetched comments data from backend:', JSON.stringify(response.data));
       setComments(response.data);
     } catch (error) {
+      console.error('[CommentList Diagnostics] Error fetching comments:', error.response || error);
       setError('Failed to fetch comments');
     }
   };
@@ -28,9 +32,19 @@ const CommentList = ({ postId }) => {
     e.preventDefault();
     if (!newComment.trim()) return;
 
+    console.log('[CommentList Diagnostics] handleSubmit called.');
+    console.log('[CommentList Diagnostics] Current user:', JSON.stringify(user));
+    console.log('[CommentList Diagnostics] Token being sent:', token); // Log the token
+
+    if (!token) {
+      console.error('[CommentList Diagnostics] No token available. Cannot submit comment.');
+      setError('You must be logged in to comment.'); // Inform user
+      return;
+    }
+
     try {
       const response = await axios.post(
-        '/api/comments',
+        API_ENDPOINTS.COMMENTS.CREATE,
         { postId, content: newComment },
         {
           headers: { Authorization: `Bearer ${token}` }
@@ -47,13 +61,28 @@ const CommentList = ({ postId }) => {
   // Delete comment
   const handleDelete = async (commentId) => {
     try {
-      await axios.delete(`/api/comments/${commentId}`, {
+      await axios.delete(API_ENDPOINTS.COMMENTS.DELETE(commentId), {
         headers: { Authorization: `Bearer ${token}` }
       });
       setComments(comments.filter(comment => comment._id !== commentId));
       setError('');
     } catch (error) {
-      setError(error.response?.data?.message || 'Failed to delete comment');
+      console.error('[CommentList Diagnostics] Error deleting comment:', error.response || error);
+      let errorMessage = 'Failed to delete comment.';
+      if (error.response) {
+        // 後端返回了響應
+        errorMessage = error.response.data?.message || `Server responded with status ${error.response.status}.`;
+        console.error('[CommentList Diagnostics] Backend error data:', error.response.data);
+      } else if (error.request) {
+        // 請求已發出，但沒有收到響應
+        errorMessage = 'No response from server. Please check your network connection.';
+        console.error('[CommentList Diagnostics] No response received:', error.request);
+      } else {
+        // 設置請求時觸發了錯誤
+        errorMessage = `Error setting up request: ${error.message}`;
+        console.error('[CommentList Diagnostics] Error setting up request:', error.message);
+      }
+      setError(errorMessage);
     }
   };
 

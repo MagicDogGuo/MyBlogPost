@@ -6,29 +6,33 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 檢查本地存儲中是否有 token
-    const token = localStorage.getItem('token');
-    if (token) {
-      // 驗證 token 並獲取用戶信息
+    const storedToken = localStorage.getItem('token');
+    if (storedToken) {
       axios.get(API_ENDPOINTS.AUTH.ME, {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${storedToken}`
         }
       })
       .then(response => {
         setUser(response.data);
+        setToken(storedToken);
       })
       .catch(error => {
         console.error('驗證 token 失敗:', error);
         localStorage.removeItem('token');
+        setUser(null);
+        setToken(null);
       })
       .finally(() => {
         setLoading(false);
       });
     } else {
+      setUser(null);
+      setToken(null);
       setLoading(false);
     }
   }, []);
@@ -36,9 +40,10 @@ export const AuthProvider = ({ children }) => {
   const login = async (formData) => {
     try {
       const response = await axios.post(API_ENDPOINTS.AUTH.LOGIN, formData);
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      setUser(user);
+      const { token: newToken, user: userData } = response.data;
+      localStorage.setItem('token', newToken);
+      setUser(userData);
+      setToken(newToken);
       return { success: true };
     } catch (error) {
       return { 
@@ -54,7 +59,6 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.post(API_ENDPOINTS.AUTH.REGISTER, formData);
       console.log('Registration response:', response.data);
       
-      // After successful registration, return success message instead of auto-login
       return { 
         success: true,
         message: 'Registration successful, please login'
@@ -71,10 +75,11 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('token');
     setUser(null);
+    setToken(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );
