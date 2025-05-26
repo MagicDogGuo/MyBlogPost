@@ -159,4 +159,55 @@ router.get('/me', async (req, res) => {
   }
 });
 
+// PUT 更新當前用戶的 username
+router.put('/me/profile', async (req, res) => {
+  try {
+    // 1. 驗證 token 並獲取用戶 ID (這部分需要 auth 中間件，我們假設它已在 app.js 層級應用或在此單獨調用)
+    // 我們先手動解析 token，如果您的 auth 中間件已經在 app.js 中正確配置給 /api/auth 路由，則可以直接用 req.user
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: 'No token provided, authorization denied.' });
+    }
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      return res.status(401).json({ message: 'Token is not valid.' });
+    }
+
+    const userId = decoded.userId;
+    const { username } = req.body;
+
+    if (!username || typeof username !== 'string' || username.trim() === '') {
+      return res.status(400).json({ message: 'Username is required and must be a non-empty string.' });
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    user.username = username.trim();
+    await user.save();
+
+    // 返回更新後的用戶信息（不含密碼，並與 /me 接口保持一致性）
+    res.json({
+      id: user._id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      donateuser: user.donateuser
+      // 如果 AuthContext 需要 favorites，這裡也應該返回
+    });
+
+  } catch (error) {
+    console.error('Error updating user profile:', error);
+    if (error.name === 'ValidationError') {
+        return res.status(400).json({ message: 'Validation Error', errors: error.errors });
+    }
+    res.status(500).json({ message: 'Server error while updating profile.' });
+  }
+});
+
 module.exports = router; 
