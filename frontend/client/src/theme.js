@@ -69,6 +69,10 @@ const theme = createTheme({
         main: PALETTE.brightRed, 
         contrastText: PALETTE.white, 
         dark: alpha(PALETTE.brightRed, 0.7), // Added dark variant for hover states etc.
+    },
+    tag_color: { // Retaining and remapping this key
+      main: '#e9ecef', // Using mediumBlueGray as no orange/yellow
+      contrastText: '#5c5c5c',
     }
   },
   typography: {
