@@ -35,8 +35,10 @@ const Login = () => {
   useEffect(() => {
     if (location.state?.message) {
       setError(location.state.message);
+      // Clear the message from location state after displaying it
+      navigate(location.pathname, { replace: true, state: {} });
     }
-  }, [location.state]);
+  }, [location.state, location.pathname, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -54,7 +56,6 @@ const Login = () => {
     try {
       const result = await login(formData);
       if (result.success) {
-        // Redirect to previously attempted page, or home if none
         const from = location.state?.from?.pathname || '/';
         navigate(from);
       } else {
@@ -69,84 +70,65 @@ const Login = () => {
 
   return (
     <div className="login-page">
-      <Container component="main" maxWidth="xs">
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
+      <Container component="main" maxWidth="xs" className="login-page-root">
+        <Paper
+          elevation={3}
+          className="login-paper-container"
         >
-          <Paper
-            elevation={3}
-            className="login-paper"
-            sx={{
-              padding: 4,
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              width: '100%',
-            }}
-          >
-            <Typography component="h1" variant="h5" sx={{ mb: 3, color: '#333' }}>
-              Login
-            </Typography>
-            {error && (
-              <Alert severity={location.state?.message ? "success" : "error"} sx={{ width: '100%', mt: 2 }}>
-                {error}
-              </Alert>
-            )}
-            <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1, width: '100%' }}>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email"
-                name="email"
-                autoComplete="email"
-                autoFocus
-                value={formData.email}
-                onChange={handleChange}
-                sx={{ mb: 2 }}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                value={formData.password}
-                onChange={handleChange}
-                sx={{ mb: 2 }}
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ 
-                  mt: 3, 
-                  mb: 2,
-                  backgroundColor: '#4CAF50',
-                  '&:hover': {
-                    backgroundColor: '#45a049',
-                  }
-                }}
-                disabled={loading}
-              >
-                {loading ? 'Logging in...' : 'Login'}
-              </Button>
-              <Box sx={{ textAlign: 'center' }}>
-                <Link component={RouterLink} to="/register" variant="body2" sx={{ color: '#4CAF50' }}>
-                  Don't have an account? Sign up
-                </Link>
-              </Box>
+          <Typography component="h1" variant="h5" className="login-title">
+            Login
+          </Typography>
+          {error && (
+            <Alert 
+              severity={location.state?.message && !formData.email ? "success" : "error"}
+              className="login-alert"
+            >
+              {error}
+            </Alert>
+          )}
+          <Box component="form" onSubmit={handleSubmit} className="login-form-box">
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              value={formData.email}
+              onChange={handleChange}
+              sx={{ mb: 2 }}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              value={formData.password}
+              onChange={handleChange}
+              sx={{ mb: 2 }}
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              className="login-submit-button"
+              disabled={loading}
+            >
+              {loading ? 'Logging in...' : 'Login'}
+            </Button>
+            <Box sx={{ textAlign: 'center', mt: 2 }}>
+              <Link component={RouterLink} to="/register" variant="body2" className="login-signup-link">
+                Don't have an account? Sign up
+              </Link>
             </Box>
-          </Paper>
-        </Box>
+          </Box>
+        </Paper>
       </Container>
     </div>
   );

@@ -13,4 +13,72 @@
 .login-paper {
   background-color: rgba(255, 255, 255, 0.95) !important;
   backdrop-filter: blur(5px);
+}
+
+.login-page-root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Add more page-level styles if needed, e.g., min-height, background */
+  /* background-color: var(--theme-background-default); */ /* Optional: if you want themed page background */
+  min-height: calc(100vh - 64px - 73px); /* Assuming AppBar height 64px and Footer height approx 73px */
+  padding-top: 2rem; /* Add some padding from the top */
+}
+
+.login-paper-container {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  background-color: var(--theme-background-paper);
+  border-radius: 8px;
+  box-shadow: var(--theme-custom-shadow-soft);
+}
+
+.login-title {
+  margin-bottom: 1.5rem;
+  color: var(--theme-text-primary);
+}
+
+.login-alert {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.login-form-box {
+  margin-top: 0.5rem;
+  width: 100%;
+}
+
+.login-textfield {
+  /* Specific overrides for textfield margins if needed, handled by MUI margin="normal" and sx={{mb:2}} mostly */
+  /* Default MUI TextField styles will apply from the theme */
+}
+
+.login-submit-button {
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  background-color: var(--theme-success-main);
+  color: var(--theme-success-contrast-text);
+}
+
+.login-submit-button:hover {
+  background-color: var(--theme-success-dark);
+}
+
+.login-signup-link {
+  color: var(--theme-success-main);
+  text-align: center;
+}
+
+/* Styles for the overall page (div with className="login-page") if needed */
+/* For example, to ensure it takes full height and has a background */
+.login-page {
+    /* background-color: var(--theme-background-default); */ /* Example if you want themed background */
+    /* min-height: 100vh; */ /* Ensure it takes at least full viewport height */
+    /* display: flex; */ /* If you want to center the Container component itself */
+    /* justify-content: center; */
+    /* align-items: flex-start; */ /* Or center */
+    /* padding-top: 2rem; */ /* Example padding */
 } 

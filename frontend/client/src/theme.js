@@ -7,6 +7,8 @@ const PALETTE = {
   lightBlueGray: '#EDF2F4',
   brightRed: 'rgb(246, 77, 97)',
   darkRed: 'rgb(246, 77, 97)',
+  greenSuccess: '#4CAF50', // Added for login page button and links
+  greenSuccessDark: '#45a049', // Darker green for hover
   white: '#FFFFFF',
   black: '#000000',
 };
@@ -38,8 +40,9 @@ const theme = createTheme({
       contrastText: PALETTE.white,
     },
     success: {
-      main: PALETTE.darkBlueGray, // Using a distinct color from the palette
-      contrastText: PALETTE.white,
+      main: PALETTE.greenSuccess, // Updated to green for login page styles
+      dark: PALETTE.greenSuccessDark, // Added dark variant
+      contrastText: PALETTE.white, // Assuming white text on green background
     },
     background: {
       default: PALETTE.lightBlueGray, // #EDF2F4 as main background
