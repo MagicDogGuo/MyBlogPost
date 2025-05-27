@@ -53,10 +53,6 @@ router.get('/:id', async (req, res) => {
 // 創建文章
 router.post('/', auth, async (req, res) => {
   try {
-    if (req.user.role !== 'admin') {
-      return res.status(403).json({ message: '只有管理員可以發布文章' });
-    }
-
     const { title, content, imageUrl, tags } = req.body;
     const post = new Post({
       title,
@@ -76,16 +72,18 @@ router.post('/', auth, async (req, res) => {
 // 更新文章
 router.put('/:id', auth, async (req, res) => {
   try {
-    if (req.user.role !== 'admin') {
-      return res.status(403).json({ message: '只有管理員可以修改文章' });
-    }
-
-    const { title, content, imageUrl, tags } = req.body;
     const post = await Post.findById(req.params.id);
     
     if (!post) {
       return res.status(404).json({ message: '文章不存在' });
     }
+
+    // Check if the user is the author or an admin
+    if (post.author.toString() !== req.user._id && req.user.role !== 'admin') {
+      return res.status(403).json({ message: '沒有權限修改此文章' });
+    }
+
+    const { title, content, imageUrl, tags } = req.body;
 
     if (title) post.title = title;
     if (content) post.content = content;
@@ -102,16 +100,17 @@ router.put('/:id', auth, async (req, res) => {
 // 刪除文章
 router.delete('/:id', auth, async (req, res) => {
   try {
-    if (req.user.role !== 'admin') {
-      return res.status(403).json({ message: '只有管理員可以刪除文章' });
-    }
-
     const post = await Post.findById(req.params.id);
     if (!post) {
       return res.status(404).json({ message: '文章不存在' });
     }
 
-    await post.remove();
+    // Check if the user is the author or an admin
+    if (post.author.toString() !== req.user._id && req.user.role !== 'admin') {
+      return res.status(403).json({ message: '沒有權限刪除此文章' });
+    }
+
+    await post.deleteOne();
     res.json({ message: '文章已刪除' });
   } catch (error) {
     res.status(500).json({ message: error.message });

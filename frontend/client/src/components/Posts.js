@@ -102,11 +102,11 @@ function Posts() {
     <Container maxWidth="lg" sx={{ mt: 4 }}>
       <Grid container spacing={4}>
         <Grid item xs={12} md={8}>
-          {isAdmin && (
+          {user && (
             <Box sx={{ mb: 2 }}>
               <Button
                 variant="contained"
-                color="Button"
+                color="primary"
                 startIcon={<AddIcon />}
                 onClick={() => setOpenDialog(true)}
               >
@@ -130,7 +130,7 @@ function Posts() {
           </Box>
         </Grid>
 
-        {isAdmin && (
+        {user && (
           <PostForm
             open={openDialog}
             onClose={() => {

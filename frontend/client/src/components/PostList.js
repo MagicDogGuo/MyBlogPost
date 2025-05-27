@@ -86,6 +86,7 @@ const PostListItem = ({ post, onDelete, onEdit, isAdmin, user }) => {
   };
   
   const formattedDate = post.createdAt ? formatDistanceToNowStrict(new Date(post.createdAt), { addSuffix: true }) : 'some time ago';
+  const canManagePost = isAdmin || (user && post.author?._id === user.id);
 
   return (
     <Card sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, mb: 3, boxShadow: 'none', borderBottom: '1px solid #e0e0e0', borderRadius:0, pb:2 }}>
@@ -138,7 +139,7 @@ const PostListItem = ({ post, onDelete, onEdit, isAdmin, user }) => {
           </Box>
           
           <Box>
-            {isAdmin && (
+            {canManagePost && (
               <IconButton size="small" onClick={handleMenuOpen}><Icons.MoreHoriz sx={{fontSize: '1.2rem'}} /></IconButton>
             )}
           </Box>
@@ -156,7 +157,7 @@ const PostListItem = ({ post, onDelete, onEdit, isAdmin, user }) => {
           </Link>
         </Box>
       )}
-      {isAdmin && (
+      {canManagePost && (
         <Menu
             anchorEl={anchorEl}
             open={menuOpen}

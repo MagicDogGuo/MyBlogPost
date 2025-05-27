@@ -131,6 +131,7 @@ const PostDetail = () => {
         navigate('/posts');
       } catch (error) {
         setError('Failed to delete post');
+        console.error('Error deleting post in PostDetail:', error.response ? error.response.data : error.message, error);
       }
     }
   };
@@ -239,6 +240,8 @@ const PostDetail = () => {
   if (error) return <div>{error}</div>;
   if (!post) return <div>Post not found</div>;
 
+  const canManagePost = isAdmin || (user && post.author?._id === user.id);
+
   return (
     <div className="post-detail">
       <Container maxWidth="md">
@@ -257,7 +260,7 @@ const PostDetail = () => {
               <Typography variant="h4" component="h1" gutterBottom>
                 {post.title}
               </Typography>
-              {isAdmin && (
+              {canManagePost && (
                 <Box>
                   <Tooltip title="Edit Post">
                     <IconButton onClick={handleEditClick} color="primary">
