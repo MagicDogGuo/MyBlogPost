@@ -3,10 +3,11 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const Post = require('../models/Post');
+const Comment = require('../models/Comment');
 
 // 預設管理員用戶
 const defaultAdmin = {
-  username: 'admin',
+  username: 'Sam',
   email: 'admin@example.com',
   password: 'admin123',
   role: 'admin',
@@ -16,7 +17,7 @@ const defaultAdmin = {
 
 // 預設一般用戶
 const defaultUser = {
-  username: 'user',
+  username: 'John Chen',
   email: 'user@example.com',
   password: 'user123',
   role: 'user',
@@ -40,6 +41,41 @@ const defaultPosts = [
     title: "Sustainable Living: Tips for an Eco-Friendly Lifestyle",
     content: "Sustainability is more than just a buzzword; it's a way of life. As the effects of climate change become more pronounced, there's a growing realization about the need to live sustainably. From reducing waste and conserving energy to supporting eco-friendly products, there are numerous ways we can make our daily lives more environmentally friendly. This post will explore practical tips and habits that can make a significant difference.",
     tags: ["Environment", "Lifestyle", "Sustainability"]
+  },
+  {
+    title: "Exploring the Wonders of Deep Sea",
+    content: "The deep sea is the lowest layer in the ocean, existing below the thermocline and above the seabed, at a depth of 1000 fathoms or more. Little or no light penetrates this part of the ocean and most of the organisms that live there rely on falling organic matter produced in the photic zone.",
+    tags: ["Oceanography", "Marine Biology", "Exploration"]
+  },
+  {
+    title: "The Future of Remote Work",
+    content: "Remote work has seen a significant surge in recent years, accelerated by global events. This shift is reshaping how companies operate and how employees balance work and life. What does the future hold for remote work? This article explores the trends, benefits, and challenges.",
+    tags: ["Work", "Future", "Technology", "Lifestyle"]
+  },
+  {
+    title: "Understanding Quantum Computing",
+    content: "Quantum computing is a new kind of computing that uses the principles of quantum mechanics to solve complex problems that are beyond the capabilities of classical computers. It has the potential to revolutionize fields like medicine, materials science, and artificial intelligence.",
+    tags: ["Quantum Computing", "Technology", "Science"]
+  },
+  {
+    title: "A Guide to Mindful Meditation",
+    content: "Mindful meditation is a practice that helps you focus on the present moment, reducing stress and improving overall well-being. This guide provides simple steps to start your meditation journey and experience its benefits.",
+    tags: ["Mindfulness", "Meditation", "Health", "Lifestyle"]
+  },
+  {
+    title: "The Art of Storytelling in Marketing",
+    content: "Storytelling is a powerful tool in marketing. It helps create an emotional connection with the audience, making brands more memorable and relatable. Learn how to craft compelling narratives that resonate with your customers.",
+    tags: ["Marketing", "Business", "Storytelling"]
+  },
+  {
+    title: "Renewable Energy Sources: A Comprehensive Overview",
+    content: "Renewable energy sources like solar, wind, and hydro are crucial for a sustainable future. This article provides a comprehensive overview of different types of renewable energy, their advantages, and their role in combating climate change.",
+    tags: ["Renewable Energy", "Environment", "Sustainability", "Technology"]
+  },
+  {
+    title: "Beginner's Guide to Learning Python",
+    content: "Python is a versatile and widely-used programming language, known for its readability and extensive libraries. This beginner's guide will help you get started with Python, covering the basics and pointing you to further resources.",
+    tags: ["Programming", "Python", "Technology", "Education"]
   }
 ];
 
@@ -75,6 +111,12 @@ async function initData() {
       });
     } else {
       adminUser = existingAdmin;
+      if (adminUser.username !== defaultAdmin.username) {
+        console.log(`更新現有管理員 ${adminUser.username} 的用戶名為 ${defaultAdmin.username}...`);
+        adminUser.username = defaultAdmin.username;
+        await adminUser.save();
+        console.log('管理員用戶名更新成功。');
+      }
       console.log('使用現有管理員用戶:', {
         id: adminUser._id,
         username: adminUser.username,
@@ -82,35 +124,25 @@ async function initData() {
       });
     }
 
-    // 檢查是否已有一般用戶
-    console.log('檢查一般用戶...');
-    const existingUser = await User.findOne({ email: defaultUser.email });
-    console.log('現有一般用戶:', existingUser ? '存在' : '不存在');
-    
-    if (!existingUser) {
-      console.log('創建新一般用戶...');
-      // 創建一般用戶
-      const normalUser = new User({
+    // 創建或獲取一般用戶 (留言者)
+    let commentingUser;
+    console.log('檢查一般用戶 (留言者)...');
+    const existingCommentingUser = await User.findOne({ email: defaultUser.email });
+    if (!existingCommentingUser) {
+      console.log('創建新一般用戶 (留言者)...');
+      commentingUser = new User({
         username: defaultUser.username,
         email: defaultUser.email,
-        password: defaultUser.password,
+        password: defaultUser.password, // 密碼會自動哈希
         role: defaultUser.role,
         donateuser: defaultUser.donateuser,
         createdAt: defaultUser.createdAt
       });
-      await normalUser.save();
-      console.log('一般用戶創建成功:', {
-        id: normalUser._id,
-        username: normalUser.username,
-        role: normalUser.role,
-        donateuser: normalUser.donateuser
-      });
+      await commentingUser.save();
+      console.log('一般用戶 (留言者) 創建成功:', { id: commentingUser._id, username: commentingUser.username });
     } else {
-      console.log('使用現有一般用戶:', {
-        id: existingUser._id,
-        username: existingUser.username,
-        role: existingUser.role
-      });
+      commentingUser = existingCommentingUser;
+      console.log('使用現有一般用戶 (留言者):', { id: commentingUser._id, username: commentingUser.username });
     }
 
     // 刪除所有現有文章並重新創建
@@ -120,34 +152,66 @@ async function initData() {
 
     // 創建新文章
     console.log('開始創建新文章...');
+    const createdPosts = []; // 用於存儲已創建的文章
     for (const postData of defaultPosts) {
       const post = new Post({
         ...postData,
-        author: adminUser._id,
+        author: adminUser._id, // 所有文章由管理員創建
         createdAt: new Date(),
         updatedAt: new Date()
       });
       await post.save();
-      
-      // 驗證文章是否正確保存
-      const savedPost = await Post.findById(post._id).populate('author');
-      console.log('文章創建成功:', {
-        id: savedPost._id,
-        title: savedPost.title,
-        authorId: savedPost.author._id,
-        authorUsername: savedPost.author.username
-      });
+      createdPosts.push(post); // 將創建的文章添加到列表中
+      console.log(`文章創建成功: ${post.title} (ID: ${post._id})`);
     }
+    console.log(`${createdPosts.length} 篇文章創建完畢。`);
 
-    // 驗證所有文章的作者關聯
-    console.log('驗證所有文章...');
-    const allPosts = await Post.find().populate('author');
-    console.log('所有文章驗證完成:', allPosts.map(post => ({
-      id: post._id,
-      title: post.title,
-      authorId: post.author._id,
-      authorUsername: post.author.username
-    })));
+    // 清理現有評論 (可選，但為了保持初始化的一致性推薦添加)
+    console.log('清理現有評論...');
+    await Comment.deleteMany({});
+    console.log('現有評論已清理');
+
+    // 為隨機5篇文章添加評論 (如果文章和用戶存在)
+    if (commentingUser && createdPosts.length > 0) {
+      console.log(`開始為 ${commentingUser.username} 添加評論...`);
+      const postsToCommentOn = [...createdPosts].sort(() => 0.5 - Math.random()).slice(0, 5);
+      let commentsAddedCount = 0;
+
+      if (postsToCommentOn.length > 0) {
+        for (const post of postsToCommentOn) {
+          const sampleComments = [
+            "Great article, very insightful!",
+            "Thanks for sharing this.",
+            "I have a question about this part...",
+            "Really enjoyed reading this post.",
+            "This is exactly what I was looking for.",
+            "Could you elaborate more on the first point?",
+            "Helpful information, thank you!",
+            "Well written and easy to understand.",
+            "Looking forward to more content like this.",
+            "I agree with most of your points."
+          ];
+          const randomCommentContent = sampleComments[Math.floor(Math.random() * sampleComments.length)];
+          
+          const newComment = new Comment({
+            postId: post._id,
+            user: commentingUser._id,
+            content: randomCommentContent,
+            isPublic: true, // 確保評論公開
+            createdAt: new Date()
+          });
+          await newComment.save();
+          commentsAddedCount++;
+          console.log(`為文章 "${post.title}" 添加了評論: "${randomCommentContent}"`);
+        }
+        console.log(`${commentingUser.username} 成功添加了 ${commentsAddedCount} 條評論。`);
+      } else {
+        console.log('沒有足夠的文章來添加評論。');
+      }
+    } else {
+      if (!commentingUser) console.log('留言用戶不存在，跳過添加評論。');
+      if (createdPosts.length === 0) console.log('沒有文章可供評論，跳過添加評論。');
+    }
 
     console.log('數據初始化完成');
   } catch (error) {
