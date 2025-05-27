@@ -6,6 +6,7 @@ import {
   Paper
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom'; // 假設點擊標籤可以導航
+import './RecommendedTopics.css'; // Import the CSS file
 
 // 佔位數據
 const placeholderTopics = [
@@ -17,11 +18,11 @@ const RecommendedTopics = () => {
   const topics = placeholderTopics;
 
   return (
-    <Paper elevation={0} sx={{ p: 2, backgroundColor: '#f8f9fa', borderRadius: 2 }}>
-      <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+    <Paper elevation={0} className="recommended-topics-paper">
+      <Typography variant="h6" className="recommended-topics-title">
         Recommended Topics
       </Typography>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+      <Box className="recommended-topics-chip-container">
         {topics.map((topic) => (
           <Chip 
             key={topic} 
@@ -29,14 +30,7 @@ const RecommendedTopics = () => {
             component={RouterLink} 
             to={`/tags/${encodeURIComponent(topic)}`}
             clickable 
-            sx={{ 
-              backgroundColor: '#e9ecef', 
-              color: '#495057', 
-              borderRadius: '16px',
-              '&:hover': {
-                backgroundColor: '#ced4da'
-              }
-            }}
+            className="recommended-topic-chip"
           />
         ))}
       </Box>

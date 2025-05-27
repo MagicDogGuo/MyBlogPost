@@ -1,0 +1,32 @@
+/* Styles for RecommendedTopics component */
+
+.recommended-topics-paper {
+  padding: 16px; /* Corresponds to MUI p: 2 */
+  background-color: #f8f9fa;
+  border-radius: 8px; /* Corresponds to MUI borderRadius: 2 (assuming 2 * theme.shape.borderRadius which is 4px by default) */
+  /* Alternatively, if borderRadius: 2 meant 2px, use that. Or if it meant theme.spacing(2) which is 16px, use that. */
+}
+
+.recommended-topics-title {
+  font-weight: bold;
+  margin-bottom: 16px; /* Corresponds to MUI mb: 2 */
+}
+
+.recommended-topics-chip-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px; /* Corresponds to MUI gap: 1 */
+}
+
+.recommended-topic-chip {
+  background-color: #e9ecef !important;
+  color: #5c5c5c !important;
+  border-radius: 16px;
+  /* MUI Chip's clickable and component={Link} props handle cursor and text decoration. */
+  /* We can add them explicitly if needed, but usually MUI handles it. */
+  text-decoration: none; /* Ensure no underline from Link */
+}
+
+.recommended-topic-chip:hover {
+  background-color: #ced4da;
+} 
