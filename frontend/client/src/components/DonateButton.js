@@ -10,7 +10,7 @@ const DonateButton = () => {
   return (
     <Button
       variant="contained"
-      color="Button"
+      color="button_donate"
       onClick={handleClick}
     >
       Donate Now

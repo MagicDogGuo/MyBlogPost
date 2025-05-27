@@ -1,50 +1,71 @@
 import { createTheme, alpha } from '@mui/material/styles';
 
-// Palette from user
+// New Palette based on the image
 const PALETTE = {
-  lightGreenishGray: '#D8E2DC',
+  darkBlueGray: '#2B2D42',
+  mediumBlueGray: '#8D99AE',
+  lightBlueGray: '#EDF2F4',
+  brightRed: 'rgb(246, 77, 97)',
+  darkRed: 'rgb(246, 77, 97)',
   white: '#FFFFFF',
-  lightPink: '#FFCAD4',
-  mediumPink: '#F4ACB7',
-  taupe: '#9D8189',
+  black: '#000000',
 };
+
+export { PALETTE }; // Export PALETTE
 
 // Create a theme instance.
 const theme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: PALETTE.mediumPink, // #F4ACB7
+      main: PALETTE.brightRed,    //rgb(246, 77, 97)
       contrastText: PALETTE.white,
     },
     secondary: {
-      main: PALETTE.taupe, // #9D8189
+      main: PALETTE.darkRed,       // Now rgb(246, 77, 97)
+      contrastText: PALETTE.white,
+    },
+    error: {
+      main: PALETTE.darkRed,       // Now rgb(246, 77, 97)
+      contrastText: PALETTE.white,
+    },
+    warning: {
+      main: PALETTE.mediumBlueGray, // Using mediumBlueGray as no orange/yellow
+      contrastText: PALETTE.darkBlueGray, 
+    },
+    info: {
+      main: PALETTE.mediumBlueGray,
+      contrastText: PALETTE.white,
+    },
+    success: {
+      main: PALETTE.darkBlueGray, // Using a distinct color from the palette
       contrastText: PALETTE.white,
     },
     background: {
-      default: PALETTE.white,
-      paper: PALETTE.white,
+      default: PALETTE.lightBlueGray, // #EDF2F4 as main background
+      paper: PALETTE.white,          // For cards, dialogs, etc.
     },
     text: {
-      primary: '#4A4A4A', // Dark Gray for better contrast on white background
-      secondary: PALETTE.taupe, // #9D8189
+      primary: PALETTE.darkBlueGray,   // #2B2D42
+      secondary: PALETTE.mediumBlueGray, // #8D99AE
     },
-    // Custom colors accessible via theme.palette.accentPink.main etc.
-    accentPink: {
-      main: PALETTE.lightPink,
-      contrastText: PALETTE.taupe,
+    // Custom colors, remapped from originals
+    accent: { // Was accentPink
+      main: PALETTE.brightRed,
+      contrastText: PALETTE.white,
     },
-    subtleBackground: {
-      main: PALETTE.lightGreenishGray,
-      contrastText: PALETTE.taupe,
+    subtleBackground: { // Was lightGreenishGray and taupe
+      main: PALETTE.lightBlueGray,
+      contrastText: PALETTE.darkBlueGray,
     },
-    neutralAlternate: { // For elements that need to be distinct but not primary/secondary
-        main: PALETTE.lightGreenishGray,
-        contrastText: PALETTE.taupe,
+    neutralAlternate: { // Was lightGreenishGray and taupe
+        main: PALETTE.mediumBlueGray,
+        contrastText: PALETTE.white,
     },
-    Button: {
-        main: PALETTE.lightGreenishGray,
-        contrastText: '#000000',
+    button_donate: { // Retaining and remapping this key
+        main: PALETTE.brightRed, 
+        contrastText: PALETTE.white, 
+        dark: alpha(PALETTE.brightRed, 0.7), // Added dark variant for hover states etc.
     }
   },
   typography: {
@@ -69,74 +90,80 @@ const theme = createTheme({
     h6: { fontWeight: 500 },
   },
   shape: {
-    borderRadius: 8, // Softer corners for components like Paper, Card, Button
+    borderRadius: 8,
   },
   components: {
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: PALETTE.white,
-          color: PALETTE.taupe,
-          boxShadow: `0px 2px 4px -1px ${alpha(PALETTE.taupe, 0.06)}`, // Softer shadow
-          borderBottom: `1px solid ${PALETTE.lightGreenishGray}` // Subtle border
+          backgroundColor: PALETTE.white, // Or PALETTE.darkBlueGray for a dark app bar
+          color: PALETTE.darkBlueGray,      // Text color on app bar
+          boxShadow: `0px 2px 4px -1px ${alpha(PALETTE.darkBlueGray, 0.1)}`,
+          borderBottom: `1px solid ${alpha(PALETTE.mediumBlueGray, 0.3)}`
         },
       },
     },
     MuiButton: {
       styleOverrides: {
         root: {
-          textTransform: 'none', // Keep button text casing as is
-          borderRadius: '16px', // Pill-shaped buttons
+          textTransform: 'none',
+          borderRadius: '16px',
         },
         containedPrimary: {
+          // Uses palette.primary.main (PALETTE.brightRed) and palette.primary.contrastText (PALETTE.white)
           '&:hover': {
-            backgroundColor: alpha(PALETTE.mediumPink, 0.85),
+            backgroundColor: alpha(PALETTE.brightRed, 0.85),
           },
         },
         containedSecondary: {
-            backgroundColor: PALETTE.taupe,
-            color: PALETTE.white,
+          // Uses palette.secondary.main (PALETTE.darkRed) and palette.secondary.contrastText (PALETTE.white)
           '&:hover': {
-            backgroundColor: alpha(PALETTE.taupe, 0.85),
+            backgroundColor: alpha(PALETTE.darkRed, 0.85),
           },
         },
         outlinedPrimary : {
-            borderColor: PALETTE.mediumPink,
-            color: PALETTE.mediumPink,
+            borderColor: PALETTE.brightRed,
+            color: PALETTE.brightRed,
              '&:hover': {
-                backgroundColor: alpha(PALETTE.mediumPink, 0.08),
+                backgroundColor: alpha(PALETTE.brightRed, 0.08),
             }
         }
+        // Add other button variants if needed (e.g., outlinedSecondary, textSecondary)
+        // based on the new palette. For instance:
+        // outlinedSecondary: {
+        //   borderColor: PALETTE.darkRed,
+        //   color: PALETTE.darkRed,
+        //   '&:hover': {
+        //     backgroundColor: alpha(PALETTE.darkRed, 0.08),
+        //   },
+        // },
       },
     },
     MuiChip: {
       styleOverrides: {
         root: {
-          borderRadius: '16px', // Pill-shaped chips
+          borderRadius: '16px',
         },
-        // Active tag in TagPostsPage (filled primary)
-        filledPrimary: {
-          backgroundColor: PALETTE.mediumPink,
+        filledPrimary: { // Active tag
+          backgroundColor: PALETTE.brightRed,
           color: PALETTE.white,
           '&:hover': {
-            backgroundColor: alpha(PALETTE.mediumPink, 0.85),
+            backgroundColor: alpha(PALETTE.brightRed, 0.85),
           },
         },
-        // Inactive tags in TagPostsPage (outlined default)
-        outlined: { 
-          borderColor: PALETTE.lightGreenishGray,
-          color: PALETTE.taupe,
-          backgroundColor: alpha(PALETTE.lightGreenishGray, 0.2),
+        outlined: { // Inactive tags
+          borderColor: PALETTE.mediumBlueGray,
+          color: PALETTE.darkBlueGray,
+          backgroundColor: alpha(PALETTE.mediumBlueGray, 0.1),
           '&:hover': {
-            backgroundColor: alpha(PALETTE.lightGreenishGray, 0.4),
+            backgroundColor: alpha(PALETTE.mediumBlueGray, 0.25),
           },
         },
-        // "Explore All" chip and other general purpose chips
-        filledDefault: { // Used if variant="filled" and no color prop or color="default"
-            backgroundColor: PALETTE.lightGreenishGray,
-            color: PALETTE.taupe,
+        filledDefault: { // "Explore All" chip
+            backgroundColor: PALETTE.mediumBlueGray,
+            color: PALETTE.white, // Good contrast with mediumBlueGray
              '&:hover': {
-                backgroundColor: alpha(PALETTE.lightGreenishGray, 0.7),
+                backgroundColor: alpha(PALETTE.mediumBlueGray, 0.8),
             }
         }
       },
@@ -144,41 +171,39 @@ const theme = createTheme({
     MuiCard: {
         styleOverrides: {
             root: {
-                // Using background.paper (white by default)
-                // Add a subtle border if needed, or rely on elevation/shadow
-                 border: `1px solid ${PALETTE.lightGreenishGray}`,
-                 boxShadow: 'none', // Remove default MUI card shadow if using border
+                 border: `1px solid ${alpha(PALETTE.mediumBlueGray, 0.3)}`, // Softer border
+                 boxShadow: 'none',
             }
         }
     },
     MuiPaper: {
         styleOverrides: {
             root: {
-                 //border: `1px solid ${PALETTE.lightGreenishGray}`, // Optional: if all papers should have this border
+                 // background.paper is PALETTE.white
             },
-            elevation1: { // Default elevation for many Paper components (like in UserProfilePage)
-                boxShadow: `0px 3px 6px ${alpha(PALETTE.taupe, 0.08)}`, // Softer custom shadow
+            elevation1: { 
+                boxShadow: `0px 3px 6px ${alpha(PALETTE.darkBlueGray, 0.08)}`, 
             },
             elevation2: {
-                boxShadow: `0px 4px 8px ${alpha(PALETTE.taupe, 0.1)}`,
+                boxShadow: `0px 4px 8px ${alpha(PALETTE.darkBlueGray, 0.1)}`,
             },
             elevation3: {
-                 boxShadow: `0px 5px 10px ${alpha(PALETTE.taupe, 0.12)}`,
+                 boxShadow: `0px 5px 10px ${alpha(PALETTE.darkBlueGray, 0.12)}`,
             }
         }
     },
     MuiIconButton: {
         styleOverrides: {
             root: {
-                color: PALETTE.taupe, // Default icon button color
+                color: PALETTE.mediumBlueGray,
                 '&:hover': {
-                    backgroundColor: alpha(PALETTE.taupe, 0.08)
+                    backgroundColor: alpha(PALETTE.mediumBlueGray, 0.08)
                 }
             },
             colorPrimary: {
-                color: PALETTE.mediumPink,
+                color: PALETTE.brightRed,
                  '&:hover': {
-                    backgroundColor: alpha(PALETTE.mediumPink, 0.08)
+                    backgroundColor: alpha(PALETTE.brightRed, 0.08)
                 }
             }
         }
@@ -186,10 +211,10 @@ const theme = createTheme({
     MuiLink: {
         styleOverrides: {
             root: {
-                color: PALETTE.mediumPink, // Links should be primary color
-                textDecorationColor: alpha(PALETTE.mediumPink, 0.4),
+                color: PALETTE.brightRed, 
+                textDecorationColor: alpha(PALETTE.brightRed, 0.4),
                 '&:hover': {
-                    textDecorationColor: PALETTE.mediumPink,
+                    textDecorationColor: PALETTE.brightRed,
                 }
             }
         }

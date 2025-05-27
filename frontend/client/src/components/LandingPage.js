@@ -30,12 +30,7 @@ const LandingPage = () => {
                 to="/posts" 
                 variant="contained" 
                 size="large"
-                sx={{ 
-                  backgroundColor: '#4CAF50',
-                  '&:hover': {
-                    backgroundColor: '#45a049',
-                  }
-                }}
+                color="primary"
               >
                 View Posts
               </Button>

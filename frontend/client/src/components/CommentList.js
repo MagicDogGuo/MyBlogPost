@@ -100,7 +100,7 @@ const CommentList = ({ postId }) => {
             placeholder="Write a comment..."
             required
           />
-          <button type="submit">Post Comment</button>
+          <button type="submit" color="primary">Post Comment</button>
         </form>
       )}
 
