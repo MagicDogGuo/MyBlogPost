@@ -290,7 +290,7 @@ const PostDetail = () => {
                   <Chip
                     key={index}
                     label={tag}
-                    color="primary"
+                    color="tag_color" //primary
                     sx={{ mr: 1, mb: 1 }}
                   />
                 ))}
@@ -385,7 +385,7 @@ const PostDetail = () => {
                   key={index}
                   label={tag}
                   onDelete={() => handleDeleteTag(tag)}
-                  color="primary"
+                  color="tag_color" //primary
                 />
               ))}
             </Box>
