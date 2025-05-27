@@ -11,7 +11,7 @@ router.get('/post/:postId', async (req, res) => {
       postId: req.params.postId,
       isPublic: true 
     })
-    .populate('user', 'username')
+    .populate('user', 'username _id')
     .sort({ createdAt: -1 });
     res.json(comments);
   } catch (error) {
@@ -38,7 +38,9 @@ router.post('/', auth, async function(req, res) {
     });
 
     await comment.save();
-    res.status(201).json(comment);
+    // Populate the user field before sending the response
+    const populatedComment = await Comment.findById(comment._id).populate('user', 'username _id');
+    res.status(201).json(populatedComment);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

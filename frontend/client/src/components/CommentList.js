@@ -106,25 +106,41 @@ const CommentList = ({ postId }) => {
 
       {/* Comments list */}
       <div className="comments-list">
-        {comments.map(comment => (
-          <div key={comment._id} className="comment-item">
-            <div className="comment-header">
-              <span className="comment-author">{comment.user.username}</span>
-              <span className="comment-date">
-                {new Date(comment.createdAt).toLocaleString()}
-              </span>
+        {comments.map(comment => {
+          // Log user and comment data for debugging delete button visibility
+          console.log('[CommentList Check] Current Logged-in User (from useAuth):', JSON.stringify(user));
+          console.log('[CommentList Check] Comment Author Data (from comment object):', JSON.stringify(comment.user));
+          if (user && comment.user) {
+            console.log('[CommentList Check]IDs for comparison:', 
+              `Logged-in User ID: ${user.id} (type: ${typeof user.id})`,
+              `Comment Author ID: ${comment.user._id} (type: ${typeof comment.user._id})`
+            );
+            console.log('[CommentList Check] Condition for delete button:',
+              `user.id === comment.user._id : ${user.id === comment.user._id}`,
+              `user.role === \'admin\' : ${user.role === 'admin'}`
+            );
+          }
+
+          return (
+            <div key={comment._id} className="comment-item">
+              <div className="comment-header">
+                <span className="comment-author">{comment.user?.username || 'Unknown User'}</span>
+                <span className="comment-date">
+                  {new Date(comment.createdAt).toLocaleString()}
+                </span>
+              </div>
+              <div className="comment-content">{comment.content}</div>
+              {(user?.id === comment.user?._id || user?.role === 'admin') && (
+                <button
+                  onClick={() => handleDelete(comment._id)}
+                  className="delete-comment"
+                >
+                  Delete
+                </button>
+              )}
             </div>
-            <div className="comment-content">{comment.content}</div>
-            {(user?._id === comment.user._id || user?.role === 'admin') && (
-              <button
-                onClick={() => handleDelete(comment._id)}
-                className="delete-comment"
-              >
-                Delete
-              </button>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
