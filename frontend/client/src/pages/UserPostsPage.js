@@ -124,7 +124,7 @@ const UserPostsPage = () => {
         <Box sx={{ textAlign: 'center', py: 4 }}>
           <Typography variant="h6">You haven't created any posts yet.</Typography>
           <Typography color="text.secondary">
-            Click "Create New Post" to start sharing your thoughts!
+            Click "New Post" to start sharing your thoughts!
           </Typography>
         </Box>
       )}

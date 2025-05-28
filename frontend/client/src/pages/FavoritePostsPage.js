@@ -68,14 +68,19 @@ const FavoritePostsPage = () => {
 
   if (posts.length === 0) {
     return (
-      <Container sx={{ py: 4, textAlign: 'center' }}>
-        <Typography variant="h6">Your favorites list is empty.</Typography>
-        <Typography color="text.secondary">
-          Go explore some posts and like them to add to your favorites!
+      <Container sx={{ py: 4}}>
+        <Typography variant="h4" component="h1" gutterBottom >
+          My Favorites
         </Typography>
-        <Button component={RouterLink} to="/posts" variant="contained" sx={{ mt: 2 }}>
-          Browse Posts
-        </Button>
+        <Box sx={{ textAlign: 'center', py: 4 }}>
+          <Typography variant="h6">Your favorites list is empty.</Typography>
+          <Typography color="text.secondary">
+            Go explore some posts and like them to add to your favorites!
+          </Typography>
+          <Button component={RouterLink} to="/posts" variant="contained" sx={{ mt: 2 }}>
+            Browse Posts
+          </Button>
+        </Box>
       </Container>
     );
   }
