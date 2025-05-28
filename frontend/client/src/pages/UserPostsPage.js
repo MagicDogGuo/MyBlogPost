@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { 
@@ -24,6 +24,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useAuth } from '../context/AuthContext';
 import { API_ENDPOINTS } from '../config/api'; // 假設 API 端點在此配置
+import PostForm from '../components/PostForm'; // Import PostForm
 
 const UserPostsPage = () => {
   const [posts, setPosts] = useState([]);
@@ -34,34 +35,52 @@ const UserPostsPage = () => {
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
+  const [openCreateDialog, setOpenCreateDialog] = useState(false); // State for PostForm dialog
+
+  // Hoist fetchUserPosts and wrap with useCallback
+  const fetchUserPosts = useCallback(async () => {
+    if (!token) {
+      setError('Please log in to manage your posts.');
+      setLoading(false);
+      return;
+    }
+    try {
+      setLoading(true);
+      const response = await axios.get(API_ENDPOINTS.POSTS.MY_POSTS, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      setPosts(response.data);
+      setError('');
+    } catch (err) {
+      console.error('Failed to fetch user posts:', err);
+      setError(err.response?.data?.message || 'Could not load your posts. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  }, [token]); // Dependencies for useCallback
 
   useEffect(() => {
-    const fetchUserPosts = async () => {
-      if (!token) {
-        setError('Please log in to manage your posts.');
-        setLoading(false);
-        return;
-      }
-      try {
-        setLoading(true);
-        // 假設 API_ENDPOINTS.POSTS.MY_POSTS 是獲取使用者文章的端點
-        const response = await axios.get(API_ENDPOINTS.POSTS.MY_POSTS, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        setPosts(response.data);
-        setError('');
-      } catch (err) {
-        console.error('Failed to fetch user posts:', err);
-        setError(err.response?.data?.message || 'Could not load your posts. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
+    fetchUserPosts(); // Call the hoisted function
+  }, [fetchUserPosts]); // useEffect depends on the memoized fetchUserPosts
 
-    fetchUserPosts();
-  }, [token]);
+  const handleCreatePostInDialog = async (postData) => {
+    try {
+      setError(''); // Clear previous errors
+      await axios.post(API_ENDPOINTS.POSTS.CREATE, postData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      fetchUserPosts(); // Refetch posts to show the new one
+      setOpenCreateDialog(false);
+    } catch (err) {
+      console.error('Error creating post:', err);
+      setError(err.response?.data?.message || 'Could not create the post. Please try again.');
+      // Keep dialog open if error occurs, or handle error display within PostForm
+    }
+  };
 
   const handleDeleteClick = (postId) => {
     setPostToDelete(postId);
@@ -116,6 +135,14 @@ const UserPostsPage = () => {
         <Typography variant="h4" component="h1">
           My Posts
         </Typography>
+        <Button
+          variant="contained"
+          color="primary" // Match style from Posts.js
+          startIcon={<AddIcon />}
+          onClick={() => setOpenCreateDialog(true)} // Open dialog instead of navigating
+        >
+          New Post 
+        </Button>
       </Box>
 
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>} 
@@ -162,7 +189,6 @@ const UserPostsPage = () => {
                   View
                 </Button>
                 <Box>
-                
                   <IconButton 
                     size="small" 
                     onClick={() => handleDeleteClick(post._id)}
@@ -197,6 +223,14 @@ const UserPostsPage = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Post Creation Dialog */}
+      <PostForm
+        open={openCreateDialog}
+        onClose={() => setOpenCreateDialog(false)}
+        onSubmit={handleCreatePostInDialog}
+        // initialData will be undefined/null, so it's a new post form
+      />
     </Container>
   );
 };
