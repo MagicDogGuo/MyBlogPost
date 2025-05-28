@@ -194,6 +194,26 @@ router.get('/me/favorites', auth, async (req, res) => {
   }
 });
 
+// GET 獲取當前用戶發布的所有文章
+router.get('/me/myposts', auth, async (req, res) => {
+  try {
+    const userId = req.user._id; // 從 auth 中間件獲取用戶 ID
+
+    if (!userId) {
+      return res.status(401).json({ message: 'User not authorized or user ID is invalid' });
+    }
+
+    const userPosts = await Post.find({ author: userId })
+                                .populate('author', 'username email') // 填充作者信息
+                                .sort({ createdAt: -1 });     // 按創建時間降序排列
+
+    res.json(userPosts);
+  } catch (error) {
+    console.error('Error fetching user\'s posts:', error);
+    res.status(500).json({ message: 'Failed to fetch user\'s posts. Please try again later.' });
+  }
+});
+
 // 新增：根據標籤名稱獲取文章
 router.get('/tag/:tagName', async (req, res) => {
   try {

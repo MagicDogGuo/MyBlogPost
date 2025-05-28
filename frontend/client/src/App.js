@@ -10,6 +10,7 @@ import Register from './components/Register';
 import FavoritePostsPage from './pages/FavoritePostsPage';
 import UserProfilePage from './pages/UserProfilePage';
 import TagPostsPage from './pages/TagPostsPage';
+import UserPostsPage from './pages/UserPostsPage';
 
 // 受保護的路由組件
 const ProtectedRoute = ({ children }) => {
@@ -67,6 +68,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <UserProfilePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-posts"
+              element={
+                <ProtectedRoute>
+                  <UserPostsPage />
                 </ProtectedRoute>
               }
             />

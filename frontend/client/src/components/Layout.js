@@ -20,7 +20,8 @@ import {
   NotificationsActive as NotificationsActiveIcon,
   AccountCircle as AccountCircleIcon,
   Logout as LogoutIcon,
-  Favorite as FavoriteIcon
+  Favorite as FavoriteIcon,
+  Article as ArticleIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import DonateButton from './DonateButton';
@@ -150,6 +151,12 @@ const Layout = () => {
                       <FavoriteIcon fontSize="small" />
                     </ListItemIcon>
                     My Favorites
+                  </MenuItem>
+                  <MenuItem onClick={() => { navigate('/my-posts'); handleMenuClose(); }}>
+                    <ListItemIcon>
+                      <ArticleIcon fontSize="small" />
+                    </ListItemIcon>
+                    My Posts
                   </MenuItem>
                   <Divider />
                   <MenuItem onClick={handleLogout}>
