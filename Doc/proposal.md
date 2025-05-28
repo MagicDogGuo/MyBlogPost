@@ -1,8 +1,8 @@
-# 📘 MyBlogPost 網站開發提案書
+# 📘 Wordwalker 網站開發提案書
 
 ## 一、網站簡介
 
-**MyBlogPost** 是一款基於 MERN 架構（MongoDB、Express.js、React、Node.js）打造的個人內容發布平台。  
+**Wordwalker** 是一款基於 MERN 架構（MongoDB、Express.js、React、Node.js）打造的個人內容發布平台。  
 網站採「一人創作、多方閱讀」模式，僅限管理員（站長）可發布與管理文章，一般用戶可註冊登入、閱讀文章、收藏喜愛內容，並將規劃新增互動性功能，如留言、個人頁、訂閱電子報等，以提升使用者參與與回訪率。
 
 

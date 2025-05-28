@@ -60,14 +60,22 @@ const Layout = () => {
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', width: '100%', margin: 0, padding: 0 }}>
       <AppBar position="static">
         <Toolbar>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ flexGrow: 1, cursor: 'pointer' }}
+          <Box
             onClick={() => navigate('/')}
+            sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', flexGrow: 1 }}
           >
-            Sam's Blog
-          </Typography>
+            <img
+              src={`${process.env.PUBLIC_URL}/logo192.png`}
+              alt="Wordwalker Logo"
+              style={{ height: '32px', marginRight: '8px' }}
+            />
+            <Typography
+              variant="h6"
+              component="div"
+            >
+              Wordwalker
+            </Typography>
+          </Box>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
             {user ? (
               <>
@@ -194,7 +202,7 @@ const Layout = () => {
       >
         <Container maxWidth="sm">
           <Typography variant="body1" color="text.secondary" align="center">
-            © {new Date().getFullYear()} Sam's Blog. All rights reserved.
+            © {new Date().getFullYear()} Wordwalker. All rights reserved.
           </Typography>
         </Container>
       </Box>

@@ -19,10 +19,10 @@ const LandingPage = () => {
             color: 'white'
           }}>
             <Typography variant="h2" component="h1" gutterBottom>
-              Welcome to Sam's Blog
+              Welcome to Wordwalker
             </Typography>
             <Typography variant="h5" component="h2" gutterBottom sx={{ mb: 4 }}>
-              Sharing my thoughts, experiences, and stories
+              Sharing your thoughts, experiences, and stories
             </Typography>
             <Box sx={{ display: 'flex', gap: 2 }}>
               <Button 
@@ -68,7 +68,7 @@ const LandingPage = () => {
             color: 'white'
           }}>
             <Typography variant="body1">
-              © 2025 Sam's Blog. All rights reserved.
+              © 2025 Wordwalker. All rights reserved.
             </Typography>
             <Box sx={{ display: 'flex', gap: 2 }}>
                 <Typography

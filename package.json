@@ -1,5 +1,5 @@
 {
-  "name": "myblogpost",
+  "name": "Wordwalker",
   "version": "1.0.0",
   "scripts": {
     "install-all": "npm install && cd backend && npm install && cd ../frontend/client && npm install",
