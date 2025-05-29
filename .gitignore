@@ -37,3 +37,7 @@ Thumbs.db
 
 # Misc
 *.log
+
+# Documentation folder
+Doc/
+/Doc/
