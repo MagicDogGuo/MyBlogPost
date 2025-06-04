@@ -21,7 +21,8 @@ import {
   AccountCircle as AccountCircleIcon,
   Logout as LogoutIcon,
   Favorite as FavoriteIcon,
-  Article as ArticleIcon
+  Article as ArticleIcon,
+  VolunteerActivism as VolunteerActivismIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import DonateButton from './DonateButton';
@@ -83,9 +84,6 @@ const Layout = () => {
                 <Button color="inherit" onClick={() => navigate('/posts')}>
                   Posts
                 </Button>
-                {user.role !== 'admin' && (
-                  <DonateButton />
-                )}
                 <Tooltip title="Account settings">
                   <IconButton
                     onClick={handleMenuOpen}
@@ -158,6 +156,14 @@ const Layout = () => {
                     </ListItemIcon>
                     My Posts
                   </MenuItem>
+                  {user && user.role !== 'admin' && (
+                    <MenuItem onClick={handleMenuClose}>
+                      <ListItemIcon>
+                        <VolunteerActivismIcon fontSize="small" />
+                      </ListItemIcon>
+                      <DonateButton />
+                    </MenuItem>
+                  )}
                   <Divider />
                   <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
@@ -172,7 +178,6 @@ const Layout = () => {
                 <Button color="inherit" onClick={() => navigate('/login')}>
                   Login
                 </Button>
-                <DonateButton />
               </>
             )}
             <Tooltip title="Subscribe to Newsletter">

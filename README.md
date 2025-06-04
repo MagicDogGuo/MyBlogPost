@@ -1,6 +1,26 @@
-# Blog Post Application
+## Wordwalker: Your Personal Content Publishing Platform
 
-A full-stack blog application built with React, Node.js, and MongoDB.
+**Wordwalker** is a dynamic full-stack blog application built with the MERN stack (MongoDB, Express.js, React, Node.js), designed as a personal content publishing hub. It operates on a "creator-centric, reader-focused" model where content creation and overall management are primarily handled by an administrator (the site owner). 
+
+Registered users can enjoy a seamless reading experience, save their favorite articles, and manage their own profiles. Future enhancements aim to introduce more interactive features such as commenting, personalized user pages, and newsletter subscriptions to foster greater user engagement and retention.
+
+### Key Features:
+*   **User Authentication:** Secure registration and login using JWT for access control.
+*   **Content Management:** 
+    *   **Admin:** Full control to create, edit, and delete all articles. Access to view all comments and subscriber data.
+    *   **User:** Ability to create, edit, and delete their own articles. Can also read all public articles, and manage their favorites and profile.
+*   **Favorites:** Logged-in users can bookmark/unbookmark articles and view their personalized list of favorites.
+*   **Article Reading:** All visitors can browse the list of articles and view individual post details.
+
+Our technology stack leverages:
+*   **Frontend:** React.js with Material UI for a responsive and modern user interface, React Router DOM for navigation, and Axios for API communication.
+*   **Backend:** Node.js and Express.js for robust server-side logic, Mongoose for MongoDB object modeling.
+*   **Database:** MongoDB Atlas (cloud-hosted NoSQL database).
+*   **Authentication:** JSON Web Tokens (JWT) for secure and stateless authentication.
+
+Wordwalker aims to provide a clean, intuitive, and engaging platform for both content creators and readers.
+
+---
 
 ## Demo
 
