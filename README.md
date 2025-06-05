@@ -13,6 +13,10 @@ Users can enjoy a seamless reading experience, save their favorite articles, man
 
 ![Wordwalker Screenshot2](assets/B.png) 
 
+![Wordwalker Screenshot3](assets/F.png) 
+
+![Wordwalker Screenshot4](assets/H.png) 
+
 ## ✨ Key Features
 
 *   **User Authentication & Authorization:**
@@ -93,7 +97,7 @@ Before you begin, ensure you have the following installed:
         Create a `.env` file in the `backend` directory with the following content:
         ```env
         MONGODB_URI=your_mongodb_connection_string # e.g., mongodb://localhost:27017/wordwalker or your Atlas connection string
-        JWT_SECRET=your_super_secret_jwt_key # A strong, random string for signing JWTs
+
         PORT=5000 # Port for the backend server
 
         # OpenAI API Key (for AI image generation)
