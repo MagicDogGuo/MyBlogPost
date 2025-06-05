@@ -6,6 +6,7 @@ const authRoutes = require('./routes/auth');
 const postRoutes = require('./routes/posts');
 const commentRoutes = require('./routes/comments');
 const subscriberRoutes = require('./routes/subscribers');
+const aiImageRoutes = require('./routes/aiImageRoutes');
 const initData = require('./scripts/initData');
 
 dotenv.config();
@@ -38,6 +39,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/subscribers', subscriberRoutes);
+app.use('/api/ai', aiImageRoutes);
 
 // 錯誤處理
 app.use((err, req, res, next) => {
