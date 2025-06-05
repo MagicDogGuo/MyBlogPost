@@ -207,37 +207,11 @@ The application may include default users if initialized via the `backend/script
 
 *(Please verify your `initData.js` script for accurate default credentials if you use one.)*
 
-## 💡 Roadmap (Future Enhancements)
 
-*   [ ] **Full Commenting System:** Nested comments, editing, deletion.
-*   [ ] **User Profile Pages:** Display user-published articles, bio, etc.
-*   [ ] **Newsletter Subscription:** Allow users to subscribe to site updates.
-*   [ ] **Advanced Search & Filtering:** More robust post searching capabilities.
-*   [ ] **Notification System:** Alerts for new comments, likes, etc.
-*   [ ] **Social Sharing:** Easy sharing of articles to social media platforms.
-
-## 🤝 Contributing
-
-Contributions are welcome! If you'd like to contribute to Wordwalker, please follow these steps:
-
-1.  Fork the repository.
-2.  Create your feature branch (`git checkout -b feature/YourAmazingFeature`).
-3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-4.  Push to the branch (`git push origin feature/YourAmazingFeature`).
-5.  Open a Pull Request.
 
 ## 📜 License
 
 This project is licensed under the MIT License - see the `LICENSE` file for details (if one is included in the project).
 
-## 🙏 Acknowledgements
 
-*   The React & Node.js communities
-*   Material UI (MUI)
-*   MongoDB
-*   Express.js
-*   OpenAI & Imgur APIs
-*   All open-source contributors!
-
----
 Hope this README helps you understand and get started with Wordwalker!
