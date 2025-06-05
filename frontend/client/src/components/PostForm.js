@@ -161,9 +161,21 @@ const PostForm = ({ open, onClose, onSubmit, initialData }) => {
             </Button>
             {aiImageError && <Typography color="error" sx={{ mt: 1 }}>{aiImageError}</Typography>}
             {aiGeneratedPreviewUrl && (
-              <Box sx={{ mt: 1, textAlign: 'center' }}>
-                <Typography variant="caption">Image Preview:</Typography>
-                <img src={aiGeneratedPreviewUrl} alt="Post preview" style={{ maxWidth: '100%', maxHeight: '200px', marginTop: '8px', border: '1px solid #eee' }} />
+              <Box sx={{ mt: 1 }}>
+                <Typography variant="subtitle2" gutterBottom sx={{ textAlign: 'left' }}>
+                  Image Preview:
+                </Typography>
+                <Box sx={{ textAlign: 'center' }}>
+                  <img 
+                    src={aiGeneratedPreviewUrl} 
+                    alt="Post preview" 
+                    style={{ 
+                      maxWidth: '100%', 
+                      maxHeight: '200px', 
+                      border: '1px solid #eee' 
+                    }} 
+                  />
+                </Box>
               </Box>
             )}
           </Box>
