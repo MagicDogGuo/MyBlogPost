@@ -46,5 +46,10 @@ export const API_ENDPOINTS = {
   PAYMENT: {
     CREATE_INTENT: `${API_BASE_URL}/payment/create-payment-intent`,
     UPDATE_STATUS: `${API_BASE_URL}/payment/update-status`
+  },
+
+  // AI Related Endpoints
+  AI: {
+    GENERATE_IMAGE: `${API_BASE_URL}/ai/generate-image`
   }
 }; 
