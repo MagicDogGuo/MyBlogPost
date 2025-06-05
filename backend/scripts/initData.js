@@ -30,52 +30,62 @@ const defaultPosts = [
   {
     title: "The Rise of Decentralized Finance",
     content: "Decentralized Finance (DeFi) is an emerging and rapidly evolving field in the blockchain industry. It refers to the shift from traditional, centralized financial systems to peer-to-peer finance enabled by decentralized technologies built on Ethereum and other blockchains. By removing intermediaries like banks and brokers, DeFi empowers individuals to manage their own assets and participate directly in financial activities without relying on centralized authorities. One of the core innovations of DeFi is the use of smart contracts, which are self-executing agreements with the terms directly written into code. These smart contracts allow DeFi platforms to automate transactions, lending, borrowing, and trading without the need for a trusted third party. As a result, DeFi offers greater transparency, accessibility, and efficiency compared to traditional financial models. With the promise of reduced dependency on the traditional banking sector, DeFi platforms offer a wide range of services, from lending and borrowing to insurance and trading. Users can earn interest on their crypto assets, take out loans by providing collateral, or even participate in liquidity pools and decentralized exchanges. As DeFi continues to expand, it holds the potential to reshape the financial landscape, making financial services more inclusive and accessible to people around the world.",
-    tags: ["Blockchain", "Finance", "Technology"]
+    tags: ["Blockchain", "Finance", "Technology"],
+    imageUrl: "https://i.imgur.com/B5fQSBP.png"
   },
   {
     title: "The Impact of Artificial Intelligence on Modern Businesses",
     content: "Artificial Intelligence (AI) is no longer a concept of the future. It's very much a part of our present, reshaping industries and enhancing the capabilities of existing systems. From automating routine tasks to offering intelligent insights, AI is proving to be a boon for businesses. With advancements in machine learning and deep learning, businesses can now address previously insurmountable problems and tap into new opportunities.",
-    tags: ["AI", "Business", "Technology"]
+    tags: ["AI", "Business", "Technology"],
+    imageUrl: "https://imgur.com/2yCyCSE.png"
   },
   {
     title: "Sustainable Living: Tips for an Eco-Friendly Lifestyle",
     content: "Sustainability is more than just a buzzword; it's a way of life. As the effects of climate change become more pronounced, there's a growing realization about the need to live sustainably. From reducing waste and conserving energy to supporting eco-friendly products, there are numerous ways we can make our daily lives more environmentally friendly. This post will explore practical tips and habits that can make a significant difference.",
-    tags: ["Environment", "Lifestyle", "Sustainability"]
+    tags: ["Environment", "Lifestyle", "Sustainability"],
+    imageUrl: "https://imgur.com/X2xtDQn.png"
   },
   {
     title: "Exploring the Wonders of Deep Sea",
     content: "The deep sea is the lowest layer in the ocean, existing below the thermocline and above the seabed, at a depth of 1000 fathoms or more. Little or no light penetrates this part of the ocean and most of the organisms that live there rely on falling organic matter produced in the photic zone.",
-    tags: ["Oceanography", "Marine Biology", "Exploration"]
+    tags: ["Oceanography", "Marine Biology", "Exploration"],
+    imageUrl: "https://imgur.com/1alsdgt.png"
   },
   {
     title: "The Future of Remote Work",
     content: "Remote work has seen a significant surge in recent years, accelerated by global events. This shift is reshaping how companies operate and how employees balance work and life. What does the future hold for remote work? This article explores the trends, benefits, and challenges.",
-    tags: ["Work", "Future", "Technology", "Lifestyle"]
+    tags: ["Work", "Future", "Technology", "Lifestyle"],
+    imageUrl: "https://imgur.com/SngIAJi.png"
   },
   {
     title: "Understanding Quantum Computing",
     content: "Quantum computing is a new kind of computing that uses the principles of quantum mechanics to solve complex problems that are beyond the capabilities of classical computers. It has the potential to revolutionize fields like medicine, materials science, and artificial intelligence.",
-    tags: ["Quantum Computing", "Technology", "Science"]
+    tags: ["Quantum Computing", "Technology", "Science"],
+    imageUrl: "https://imgur.com/mSZb2OK.png"
   },
   {
     title: "A Guide to Mindful Meditation",
     content: "Mindful meditation is a practice that helps you focus on the present moment, reducing stress and improving overall well-being. This guide provides simple steps to start your meditation journey and experience its benefits.",
-    tags: ["Mindfulness", "Meditation", "Health", "Lifestyle"]
+    tags: ["Mindfulness", "Meditation", "Health", "Lifestyle"],
+    imageUrl: "https://imgur.com/FPMxCBN.png"
   },
   {
     title: "The Art of Storytelling in Marketing",
     content: "Storytelling is a powerful tool in marketing. It helps create an emotional connection with the audience, making brands more memorable and relatable. Learn how to craft compelling narratives that resonate with your customers.",
-    tags: ["Marketing", "Business", "Storytelling"]
+    tags: ["Marketing", "Business", "Storytelling"],
+    imageUrl: "https://imgur.com/FAWfMWl.png"
   },
   {
     title: "Renewable Energy Sources: A Comprehensive Overview",
     content: "Renewable energy sources like solar, wind, and hydro are crucial for a sustainable future. This article provides a comprehensive overview of different types of renewable energy, their advantages, and their role in combating climate change.",
-    tags: ["Renewable Energy", "Environment", "Sustainability", "Technology"]
+    tags: ["Renewable Energy", "Environment", "Sustainability", "Technology"],
+    imageUrl: "https://imgur.com/siVcbbW.png"
   },
   {
     title: "Beginner's Guide to Learning Python",
     content: "Python is a versatile and widely-used programming language, known for its readability and extensive libraries. This beginner's guide will help you get started with Python, covering the basics and pointing you to further resources.",
-    tags: ["Programming", "Python", "Technology", "Education"]
+    tags: ["Programming", "Python", "Technology", "Education"],
+    imageUrl: "https://imgur.com/P10XHAt.png"
   }
 ];
 
