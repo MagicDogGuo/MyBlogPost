@@ -102,17 +102,27 @@ const PostForm = ({ open, onClose, onSubmit, initialData }) => {
       );
       
       const imageUrlFromApi = response.data.imageUrl;
+      const warningMessage = response.data.warning;
 
       if (imageUrlFromApi) {
         setFormData(prev => ({ ...prev, imageUrl: imageUrlFromApi }));
         setAiGeneratedPreviewUrl(imageUrlFromApi);
+        
+        if (warningMessage) {
+          setAiImageError(warningMessage);
+          console.warn('AI Image Generation Warning:', warningMessage);
+        } else {
+          setAiImageError('');
+        }
       } else {
-        throw new Error('Image URL not found in AI response.');
+        throw new Error('Image URL not found in AI response, even after backend modifications.');
       }
 
     } catch (error) {
       console.error('Error generating AI image via backend:', error);
-      setAiImageError(error.response?.data?.message || error.message || 'Failed to generate image.');
+      setAiImageError(error.response?.data?.message || error.message || 'Failed to generate image. Please try again.');
+      setAiGeneratedPreviewUrl('');
+      setFormData(prev => ({ ...prev, imageUrl: '' }));
     } finally {
       setIsGeneratingAiImage(false);
     }
@@ -159,7 +169,13 @@ const PostForm = ({ open, onClose, onSubmit, initialData }) => {
             >
               {isGeneratingAiImage ? 'Generating Image...' : 'Generate Image with AI from Title'}
             </Button>
-            {aiImageError && <Typography color="error" sx={{ mt: 1 }}>{aiImageError}</Typography>}
+            {aiImageError && 
+              <Typography 
+                color={aiImageError.toLowerCase().includes('warning') || aiImageError.toLowerCase().includes('temporary') ? "warning.main" : "error"} 
+                sx={{ mt: 1 }}
+              >
+                {aiImageError}
+              </Typography>}
             {aiGeneratedPreviewUrl && (
               <Box sx={{ mt: 1 }}>
                 <Typography variant="subtitle2" gutterBottom sx={{ textAlign: 'left' }}>
