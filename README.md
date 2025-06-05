@@ -1,8 +1,8 @@
 # Wordwalker: Your Personal Content Publishing Platform
 
-**Wordwalker** is a full-stack MERN (MongoDB, Express.js, React, Node.js) blog application designed as a personal content publishing hub. It emphasizes a "creator-centric, reader-focused" model where content creation and overall site management are primarily handled by an administrator, while registered users can manage their own contributions and personalize their reading experience.
+**Wordwalker** is a full-stack MERN (MongoDB, Express.js, React, Node.js) blog application designed as a personal content publishing hub. A standout feature is the ability for users to **automatically generate striking images for their articles using AI**, enhancing their content effortlessly. It emphasizes a "creator-centric, reader-focused" model where content creation and overall site management are primarily handled by an administrator, while registered users can manage their own contributions and personalize their reading experience.
 
-Users can enjoy a seamless reading experience, save their favorite articles, manage their profiles, and publish their own posts. Future enhancements aim to introduce more interactive features like a comprehensive commenting system, personalized user dashboards, and newsletter subscriptions to foster greater engagement.
+Users can enjoy a seamless reading experience, save their favorite articles, manage their profiles, and publish their own posts. 
 
 ## 🌐 Live Demo
 
