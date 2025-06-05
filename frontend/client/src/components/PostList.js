@@ -112,13 +112,13 @@ const PostListItem = ({ post, onDelete, onEdit, isAdmin, user }) => {
           <Typography variant="body2" color="text.secondary" sx={{
             mb: 1.5,
             display: '-webkit-box',
-            WebkitLineClamp: 2,
+            WebkitLineClamp: post.imageUrl ? 2 : 3,
             WebkitBoxOrient: 'vertical',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             lineHeight: 1.4
           }}>
-            {post.content.substring(0, 150)}
+            {post.content.substring(0, post.imageUrl ? 100 : 150)}
           </Typography>
         </Link>
 
@@ -147,8 +147,17 @@ const PostListItem = ({ post, onDelete, onEdit, isAdmin, user }) => {
       </Box>
 
       {post.imageUrl && (
-        <Box sx={{ width: { xs: '100%', sm: 150 }, height: { xs: 150, sm: 'auto'}, maxHeight: {sm: 130}, alignSelf:'center' }}>
-          <Link component={RouterLink} to={`/posts/${post._id}`} sx={{ display: 'block', width: '100%', height: '100%' }}>
+        <Box sx={{ 
+          width: { xs: '100%', sm: 180 },
+          height: { xs: 180, sm: 'auto'},
+          maxHeight: {sm: 150},
+          p: {xs: 2, sm: 0},
+          pt: {sm: 2},
+          pr: {sm: 2},
+          pb: {sm: 2},
+          alignSelf:'center' 
+        }}>
+          <Link component={RouterLink} to={`/posts/${post._id}`} sx={{ display: 'block', width: '100%', height: '100%', borderRadius: '4px', overflow: 'hidden' }}>
             <img 
               src={post.imageUrl} 
               alt={post.title} 
