@@ -13,7 +13,7 @@ Users can enjoy a seamless reading experience, save their favorite articles, man
 
 ![Wordwalker Screenshot2](assets/B.png) 
 
-![Wordwalker Screenshot3](assets/F.png) 
+![Wordwalker Screenshot3](assets/E.png) 
 
 ![Wordwalker Screenshot4](assets/H.png) 
 
