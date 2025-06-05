@@ -77,4 +77,18 @@
 .post-detail .back-button:hover {
   background-color: #45a049 !important;
 }
-*/ 
+*/
+
+/* Styles for the post image in PostDetail.js */
+.post-detail-image-container {
+  margin-top: 24px; /* Corresponds to sx={{ my: 3 }} in Material UI, assuming default spacing unit is 8px */
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.post-detail-image {
+  max-width: 100%; 
+  max-height: 400px; 
+  border-radius: 8px; 
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+} 

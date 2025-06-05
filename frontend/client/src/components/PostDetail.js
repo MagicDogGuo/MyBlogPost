@@ -297,6 +297,17 @@ const PostDetail = () => {
               </Box>
             )}
 
+            {/* Display Post Image if imageUrl exists */}
+            {post.imageUrl && (
+              <Box className="post-detail-image-container">
+                <img 
+                  src={post.imageUrl} 
+                  alt={post.title} 
+                  className="post-detail-image"
+                />
+              </Box>
+            )}
+
             <Box sx={{ display: 'flex', alignItems: 'center', mt: 3, mb: 2 }}>
               <Tooltip title={isLiked ? "Unlike" : "Like"}>
                 <span style={{ display: 'inline-flex', alignItems: 'center' }}> 
