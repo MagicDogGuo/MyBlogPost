@@ -113,7 +113,6 @@ Before you begin, ensure you have the following installed:
         ```env
         REACT_APP_API_URL=http://localhost:5000/api # Base URL for your backend API
         ```
-        *(Adjust this URL if your backend runs on a different port or host)*
 
 ## ▶️ Running the Application
 
@@ -208,6 +207,6 @@ The application may include default users if initialized via the `backend/script
 
 ## 📜 License
 
-This project is licensed under the MIT License - see the `LICENSE` file for details (if one is included in the project).
+This project is licensed under the MIT License - see the `LICENSE` file for details.
 
 
