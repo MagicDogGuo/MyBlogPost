@@ -28,7 +28,7 @@ Users can enjoy a seamless reading experience, save their favorite articles, man
         *   Dedicated "My Posts" page for managing personal articles.
     *   **Admin Privileges:**
         *   Full CRUD (Create, Read, Update, Delete) operations on all articles across the platform.
-        *   (Future) Access to manage all comments and subscriber data.
+        *   Access to manage all comments and subscriber data.
     *   **Post Features:**
         *   Rich text content support for articles.
         *   Tagging system for content categorization.
@@ -46,7 +46,7 @@ Users can enjoy a seamless reading experience, save their favorite articles, man
     *   Material UI (MUI v5)
     *   React Router DOM (v6) for navigation
     *   Axios for API communication
-    *   React Context API for global state management (e.g., AuthContext)
+    *   React Context API for global state management
 *   **Backend:**
     *   Node.js (v18+ recommended)
     *   Express.js framework
@@ -74,10 +74,9 @@ Before you begin, ensure you have the following installed:
 
 1.  **Clone the Repository:**
     ```bash
-    git clone https://github.com/your-username/blog-post.git
+    git clone https://github.com/MagicDogGuo/MyBlogPost.git
     cd blog-post
     ```
-    *(Replace `your-username/blog-post.git` with your actual repository URL)*
 
 2.  **Install Backend Dependencies:**
     ```bash
@@ -189,11 +188,10 @@ wordwalker/
 ### AI Image Generation
 *   `POST /api/ai/generate-image` - Generate an image based on a prompt and upload to Imgur (Token required)
 
-*(This list should be adjusted based on your actual API design and implemented features.)*
 
 ## 👤 Default Users
 
-The application may include default users if initialized via the `backend/scripts/initData.js` script (if such a script exists and is run):
+The application may include default users if initialized via the `backend/scripts/initData.js` script:
 
 1.  **Admin User**
     *   Email: `admin@example.com`
@@ -205,7 +203,6 @@ The application may include default users if initialized via the `backend/script
     *   Password: `user123`
     *   Role: `user`
 
-*(Please verify your `initData.js` script for accurate default credentials if you use one.)*
 
 
 
@@ -214,4 +211,3 @@ The application may include default users if initialized via the `backend/script
 This project is licensed under the MIT License - see the `LICENSE` file for details (if one is included in the project).
 
 
-Hope this README helps you understand and get started with Wordwalker!
