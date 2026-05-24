@@ -86,7 +86,7 @@ Before you begin, ensure you have the following installed:
 
 3.  **Install Frontend Dependencies:**
     ```bash
-    cd ../frontend/client
+    cd ../frontend
     npm install
     ```
 
@@ -108,8 +108,8 @@ Before you begin, ensure you have the following installed:
         *   **Obtaining `OPENAI_API_KEY`**: Visit the [OpenAI Platform](https://platform.openai.com/account/api-keys) to create your API key.
         *   **Obtaining `IMGUR_CLIENT_ID`**: Register your application on the [Imgur API Documentation page](https://apidocs.imgur.com/#registerapp). Choose anonymous usage type; an OAuth2 callback URL is not required for this functionality.
 
-    *   **Frontend (`frontend/client/.env`):**
-        Create a `.env` file in the `frontend/client` directory with the following content:
+    *   **Frontend (`frontend/.env`):**
+        Create a `.env` file in the `frontend` directory with the following content:
         ```env
         REACT_APP_API_URL=http://localhost:5000/api # Base URL for your backend API
         ```
@@ -126,7 +126,7 @@ Before you begin, ensure you have the following installed:
 2.  **Start the Frontend Development Server:**
     (In a new terminal window)
     ```bash
-    cd frontend/client
+    cd frontend
     npm start
     ```
     The frontend application will run on `http://localhost:3000` and should open automatically in your browser.
@@ -143,21 +143,20 @@ wordwalker/
 │   ├── scripts/        # Initialization scripts (e.g., default data)
 │   └── app.js          # Express application entry point and main configuration
 ├── frontend/
-│   └── client/
-│       ├── public/     # Static assets (index.html, favicon, images)
-│       ├── src/
-│       │   ├── assets/       # Image, font resources
-│       │   ├── components/   # React components
-│       │   ├── config/       # Frontend configuration (e.g., API endpoints)
-│       │   ├── context/      # React Context API (e.g., AuthContext)
-│       │   ├── hooks/        # Custom React Hooks
-│       │   ├── pages/        # Page-level components
-│       │   ├── services/     # API service wrappers
-│       │   ├── styles/       # Global styles, theme configuration
-│       │   ├── utils/        # Utility functions
-│       │   ├── App.js        # Root React component and router setup
-│       │   └── index.js      # React application entry point
-│       └── package.json
+│   ├── public/     # Static assets (index.html, favicon, images)
+│   ├── src/
+│   │   ├── assets/       # Image, font resources
+│   │   ├── components/   # React components
+│   │   ├── config/       # Frontend configuration (e.g., API endpoints)
+│   │   ├── context/      # React Context API (e.g., AuthContext)
+│   │   ├── hooks/        # Custom React Hooks
+│   │   ├── pages/        # Page-level components
+│   │   ├── services/     # API service wrappers
+│   │   ├── styles/       # Global styles, theme configuration
+│   │   ├── utils/        # Utility functions
+│   │   ├── App.js        # Root React component and router setup
+│   │   └── index.js      # React application entry point
+│   └── package.json
 └── README.md
 ```
 
