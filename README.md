@@ -4,6 +4,8 @@
 
 Users can enjoy a seamless reading experience, save their favorite articles, manage their profiles, and publish their own posts. 
 
+
+
 ## Live Demo
 
 *   **Demo URL:** [https://myblogpost-frontend-static-site.onrender.com/](https://myblogpost-frontend-static-site.onrender.com/)
@@ -156,6 +158,11 @@ Browser (JWT) → POST /api/posts { title, content, imageUrl } → save to Mongo
 
 The browser never talks to MongoDB or external APIs directly; only the Express server does, keeping credentials on the server.
 
+### Architecture Docs
+
+- See [`docs/architecture/README.md`](docs/architecture/README.md) for system overview and frontend/backend architecture diagrams.
+
+
 ## Prerequisites
 
 Before you begin, ensure you have the following installed:
@@ -163,6 +170,10 @@ Before you begin, ensure you have the following installed:
 *   Node.js (v18 or higher recommended)
 *   npm (comes with Node.js) or yarn
 *   MongoDB (if running a local database instance)
+
+
+
+
 
 ## Installation & Setup
 
