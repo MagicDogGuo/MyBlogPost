@@ -5,39 +5,56 @@ Structure of the Node.js / Express API under `backend/`.
 ## Layered architecture
 
 ```mermaid
-flowchart LR
-    subgraph Entry["Entry Layer"]
+flowchart TB
+    %% Goal: keep lines readable by avoiding many-to-many edges.
+
+    subgraph Entry["Entry"]
         APP["app.js"]
     end
 
-    subgraph Middleware["Middleware Layer"]
+    subgraph Middleware["Middleware"]
         CORS["cors()"]
         JSON["express.json()"]
-        AUTH["auth / isAdmin"]
-        ERR["Error handler 500 / 404"]
+        AUTH["auth / isAdmin<br/>(JWT + role)"]
+        ERR["Error handler<br/>500 / 404"]
     end
 
-    subgraph Routes["Route Layer /api"]
-        R1["/auth<br/>login / register / me"]
-        R2["/posts<br/>CRUD / like / favorite / tags"]
-        R3["/comments<br/>CRUD"]
-        R4["/subscribers<br/>email capture"]
-        R5["/ai<br/>generate-image"]
+    subgraph Routes["Routes (/api/*)"]
+        R_AUTH["/auth<br/>login / register / me / me(profile)"]
+        R_POSTS["/posts<br/>CRUD / like / favorite / tags"]
+        R_COMMENTS["/comments<br/>CRUD"]
+        R_SUBS["/subscribers<br/>subscribe / unsubscribe / admin list"]
+        R_AI["/ai<br/>generate-image"]
     end
 
-    subgraph Models["Data Layer (Mongoose)"]
-        M1["User"]
-        M2["Post"]
-        M3["Comment"]
-        M4["Subscriber"]
+    subgraph Data["Data (MongoDB via Mongoose)"]
+        ODM["Mongoose ODM"]
+        U["User"]
+        P["Post"]
+        C["Comment"]
+        S["Subscriber"]
+        ODM --> U & P & C & S
     end
 
-    APP --> CORS --> JSON
-    JSON --> R1 & R2 & R3 & R4 & R5
-    R2 & R3 & R4 & R5 --> AUTH
-    R1 & R2 & R3 & R4 --> M1 & M2 & M3 & M4
-    R5 -->|"OpenAI + Imgur"| EXT["External APIs"]
+    EXT["External APIs<br/>OpenAI + Imgur"]
+
+    APP --> CORS --> JSON --> Routes
     APP --> ERR
+
+    Routes --> R_AUTH & R_POSTS & R_COMMENTS & R_SUBS & R_AI
+
+    %% Auth is applied only on protected routes
+    AUTH -.protects.-> R_POSTS
+    AUTH -.protects.-> R_COMMENTS
+    AUTH -.protects.-> R_SUBS
+    AUTH -.protects.-> R_AI
+
+    R_AUTH --> ODM
+    R_POSTS --> ODM
+    R_COMMENTS --> ODM
+    R_SUBS --> ODM
+
+    R_AI --> EXT
 ```
 
 ## Application entry (`app.js`)
