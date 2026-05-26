@@ -3,7 +3,7 @@ import { Button } from '@mui/material';
 
 const DonateButton = () => {
   const handleClick = () => {
-    // 使用 window.open 在新標籤頁中打開付款鏈接
+    // Use window.open to open the payment link in a new tab
     window.open('https://buy.stripe.com/test_4gw9Bg3xU0Nh2R2dQQ', '_blank');
   };
 

@@ -20,7 +20,7 @@ const FavoritePostsPage = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const { token } = useAuth(); // 需要 token 來驗證請求
+  const { token } = useAuth(); // Token is required to authorize requests
 
   useEffect(() => {
     const fetchFavoritePosts = async () => {
@@ -105,9 +105,9 @@ const FavoritePostsPage = () => {
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
                   display: '-webkit-box',
-                  WebkitLineClamp: 3, // 顯示3行
+                  WebkitLineClamp: 3, // Display 3 lines
                   WebkitBoxOrient: 'vertical',
-                  minHeight: '3.6em' // 3行文字的高度 (假設行高1.2em)
+                  minHeight: '3.6em' // Height for 3 lines of text (assuming 1.2em line height)
                 }}>
                   {post.content} 
                 </Typography>

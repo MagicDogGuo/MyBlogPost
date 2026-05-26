@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link as RouterLink, useNavigate } from 'react-router-dom';
-import { Container, Typography, List, ListItem, /* ListItemText, */ CircularProgress, Alert, Paper, /* Box, */ Divider, Chip, Stack } from '@mui/material'; // ListItemText 和 Box 暫未直接使用，但保留以防未來擴展
+import { Container, Typography, List, ListItem, /* ListItemText, */ CircularProgress, Alert, Paper, /* Box, */ Divider, Chip, Stack } from '@mui/material'; // ListItemText and Box are not directly used now, kept for future extension
 import { API_ENDPOINTS } from '../config/api';
 import axios from 'axios';
 import ExploreIcon from '@mui/icons-material/Explore'; // Icon for "Explore topics"
-// import { useAuth } from '../context/AuthContext'; // 移除未使用的導入
+// import { useAuth } from '../context/AuthContext'; // Removed unused import
 
 const TagPostsPage = () => {
-  const { tagName: rawTagName } = useParams(); // 重命名為 rawTagName 以示區分
+  const { tagName: rawTagName } = useParams(); // Renamed to rawTagName for clarity
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [loadingPosts, setLoadingPosts] = useState(true);
   const [errorPosts, setErrorPosts] = useState(null);
-  const [decodedTagName, setDecodedTagName] = useState(''); // 用於顯示解碼後的標籤名
+  const [decodedTagName, setDecodedTagName] = useState(''); // Used to display decoded tag name
 
   const [uniqueTags, setUniqueTags] = useState([]);
   const [displayedUniqueTags, setDisplayedUniqueTags] = useState([]);
@@ -147,7 +147,7 @@ const TagPostsPage = () => {
                 <Typography variant="caption" color="text.secondary" gutterBottom>
                   By {post.author?.username || 'Unknown Author'} - {new Date(post.createdAt).toLocaleDateString()}
                 </Typography>
-                {/* 可以考慮添加摘要或部分內容 */}
+                {/* Optional: add excerpt or partial content here */}
                 {/* <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
                   {post.content?.substring(0, 150)}...
                 </Typography> */}

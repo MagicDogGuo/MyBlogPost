@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
         setToken(storedToken);
       })
       .catch(error => {
-        console.error('驗證 token 失敗:', error);
+        console.error('Token verification failed:', error);
         localStorage.removeItem('token');
         setUser(null);
         setToken(null);

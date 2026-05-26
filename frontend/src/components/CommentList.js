@@ -70,15 +70,15 @@ const CommentList = ({ postId }) => {
       console.error('[CommentList Diagnostics] Error deleting comment:', error.response || error);
       let errorMessage = 'Failed to delete comment.';
       if (error.response) {
-        // 後端返回了響應
+        // Backend returned a response
         errorMessage = error.response.data?.message || `Server responded with status ${error.response.status}.`;
         console.error('[CommentList Diagnostics] Backend error data:', error.response.data);
       } else if (error.request) {
-        // 請求已發出，但沒有收到響應
+        // Request was sent, but no response was received
         errorMessage = 'No response from server. Please check your network connection.';
         console.error('[CommentList Diagnostics] No response received:', error.request);
       } else {
-        // 設置請求時觸發了錯誤
+        // Error occurred while setting up the request
         errorMessage = `Error setting up request: ${error.message}`;
         console.error('[CommentList Diagnostics] Error setting up request:', error.message);
       }

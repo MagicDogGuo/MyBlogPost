@@ -43,7 +43,7 @@ const postSchema = new mongoose.Schema({
   }
 });
 
-// 更新 updatedAt
+// Update updatedAt
 postSchema.pre('save', function(next) {
   if (this.isModified()) {
     this.updatedAt = Date.now();

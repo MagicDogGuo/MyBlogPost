@@ -4,45 +4,45 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
-// 登入
+// Login
 router.post('/login', async (req, res) => {
   try {
-    console.log('收到登入請求:', req.body);
+    console.log('Received login request:', req.body);
     
     const { email, password } = req.body;
     
     if (!email || !password) {
-      return res.status(400).json({ message: '請提供電子郵件和密碼' });
+      return res.status(400).json({ message: 'Please provide email and password' });
     }
 
-    console.log('正在查找用戶:', email);
+    console.log('Looking up user:', email);
     const user = await User.findOne({ email });
-    console.log('找到用戶:', user ? '是' : '否');
+    console.log('User found:', user ? 'yes' : 'no');
 
     if (!user) {
-      return res.status(400).json({ message: '用戶不存在' });
+      return res.status(400).json({ message: 'User does not exist' });
     }
 
     try {
-      console.log('開始密碼比較...');
+      console.log('Starting password comparison...');
       const isMatch = await user.comparePassword(password);
-      console.log('密碼比較完成，結果:', isMatch);
+      console.log('Password comparison finished, result:', isMatch);
       
       if (!isMatch) {
-        return res.status(400).json({ message: '密碼錯誤' });
+        return res.status(400).json({ message: 'Incorrect password' });
       }
     } catch (bcryptError) {
-      console.error('密碼比較錯誤:', bcryptError);
-      return res.status(500).json({ message: '密碼驗證失敗', error: bcryptError.message });
+      console.error('Password comparison error:', bcryptError);
+      return res.status(500).json({ message: 'Password verification failed', error: bcryptError.message });
     }
 
-    console.log('生成 JWT token...');
+    console.log('Generating JWT token...');
     const token = jwt.sign(
       { userId: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
-    console.log('Token 生成成功');
+    console.log('Token generated successfully');
 
     res.json({
       token,
@@ -55,46 +55,46 @@ router.post('/login', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('登入錯誤:', error);
-    res.status(500).json({ message: '伺服器錯誤', error: error.message });
+    console.error('Login error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
 
-// 註冊
+// Register
 router.post('/register', async (req, res) => {
   try {
-    console.log('收到註冊請求:', req.body);
+    console.log('Received registration request:', req.body);
     
     const { username, email, password, confirmPassword } = req.body;
     
-    // 驗證所有必要欄位
+    // Validate required fields
     if (!username || !email || !password) {
-      return res.status(400).json({ message: '請提供所有必要資訊' });
+      return res.status(400).json({ message: 'Please provide all required information' });
     }
 
-    // 驗證密碼長度
+    // Validate password length
     if (password.length < 6) {
-      return res.status(400).json({ message: '密碼長度必須至少為6個字符' });
+      return res.status(400).json({ message: 'Password must be at least 6 characters long' });
     }
 
-    // 驗證密碼確認
+    // Validate password confirmation
     if (password !== confirmPassword) {
-      return res.status(400).json({ message: '密碼和確認密碼不匹配' });
+      return res.status(400).json({ message: 'Password and confirmation password do not match' });
     }
 
-    // 驗證電子郵件格式
+    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return res.status(400).json({ message: '請提供有效的電子郵件地址' });
+      return res.status(400).json({ message: 'Please provide a valid email address' });
     }
 
-    // 檢查用戶是否已存在
+    // Check whether user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: '此電子郵件已被註冊' });
+      return res.status(400).json({ message: 'This email is already registered' });
     }
 
-    // 創建新用戶
+    // Create new user
     const user = new User({
       username,
       email,
@@ -103,11 +103,11 @@ router.post('/register', async (req, res) => {
       donateuser: 'no'
     });
 
-    console.log('正在保存用戶...');
+    console.log('Saving user...');
     await user.save();
-    console.log('用戶保存成功');
+    console.log('User saved successfully');
 
-    // 生成 JWT token
+    // Generate JWT token
     const token = jwt.sign(
       { userId: user._id, role: user.role },
       process.env.JWT_SECRET,
@@ -115,7 +115,7 @@ router.post('/register', async (req, res) => {
     );
 
     res.status(201).json({
-      message: '註冊成功',
+      message: 'Registration successful',
       token,
       user: {
         id: user._id,
@@ -126,24 +126,24 @@ router.post('/register', async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('註冊錯誤:', error);
-    res.status(500).json({ message: '註冊失敗', error: error.message });
+    console.error('Registration error:', error);
+    res.status(500).json({ message: 'Registration failed', error: error.message });
   }
 });
 
-// 獲取當前用戶信息
+// Get current user info
 router.get('/me', async (req, res) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
-      return res.status(401).json({ message: '未授權' });
+      return res.status(401).json({ message: 'Unauthorized' });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.userId).select('-password');
 
     if (!user) {
-      return res.status(404).json({ message: '用戶不存在' });
+      return res.status(404).json({ message: 'User does not exist' });
     }
 
     res.json({
@@ -154,16 +154,16 @@ router.get('/me', async (req, res) => {
       donateuser: user.donateuser
     });
   } catch (error) {
-    console.error('獲取用戶信息錯誤:', error);
-    res.status(401).json({ message: '未授權', error: error.message });
+    console.error('Error fetching user info:', error);
+    res.status(401).json({ message: 'Unauthorized', error: error.message });
   }
 });
 
-// PUT 更新當前用戶的 username
+// PUT update current user's username
 router.put('/me/profile', async (req, res) => {
   try {
-    // 1. 驗證 token 並獲取用戶 ID (這部分需要 auth 中間件，我們假設它已在 app.js 層級應用或在此單獨調用)
-    // 我們先手動解析 token，如果您的 auth 中間件已經在 app.js 中正確配置給 /api/auth 路由，則可以直接用 req.user
+    // 1. Validate token and get user ID (this normally belongs in auth middleware)
+    // We parse token manually here; if auth middleware is already applied to /api/auth, req.user can be used directly
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
       return res.status(401).json({ message: 'No token provided, authorization denied.' });
@@ -191,14 +191,14 @@ router.put('/me/profile', async (req, res) => {
     user.username = username.trim();
     await user.save();
 
-    // 返回更新後的用戶信息（不含密碼，並與 /me 接口保持一致性）
+    // Return updated user info (without password), consistent with /me response
     res.json({
       id: user._id,
       username: user.username,
       email: user.email,
       role: user.role,
       donateuser: user.donateuser
-      // 如果 AuthContext 需要 favorites，這裡也應該返回
+      // If AuthContext needs favorites, return it here as well
     });
 
   } catch (error) {

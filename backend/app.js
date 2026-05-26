@@ -13,14 +13,14 @@ dotenv.config();
 
 const app = express();
 
-// 連接 MongoDB 並初始化數據
+// Connect to MongoDB and initialize data
 console.log('Connecting to MongoDB...');
 console.log('MongoDB URI:', process.env.MONGODB_URI);
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(async () => {
     console.log('MongoDB connection successful');
-    // 初始化數據
+    // Initialize data
     console.log('Starting to initialize data...');
     await initData();
     console.log('Data initialization completed');
@@ -30,31 +30,31 @@ mongoose.connect(process.env.MONGODB_URI)
     process.exit(1);
   });
 
-// 中間件
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// 路由
+// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/subscribers', subscriberRoutes);
 app.use('/api/ai', aiImageRoutes);
 
-// 錯誤處理
+// Error handling
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ message: 'Server error' });
 });
 
-// 404 處理
+// 404 handling
 app.use((req, res) => {
-  res.status(404).json({ message: '找不到請求的資源' });
+  res.status(404).json({ message: 'Requested resource not found' });
 });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`伺服器運行在端口 ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
 
 module.exports = app; 

@@ -30,7 +30,7 @@ const commentSchema = new mongoose.Schema({
   }
 });
 
-// 更新 updatedAt
+// Update updatedAt
 commentSchema.pre('save', function(next) {
   if (this.isModified()) {
     this.updatedAt = Date.now();
@@ -38,7 +38,7 @@ commentSchema.pre('save', function(next) {
   next();
 });
 
-// 更新文章評論計數
+// Update post comment count
 commentSchema.post('save', async function() {
   const Post = mongoose.model('Post');
   const commentCount = await this.constructor.countDocuments({ 
@@ -48,10 +48,10 @@ commentSchema.post('save', async function() {
   await Post.findByIdAndUpdate(this.postId, { commentCount });
 });
 
-// 刪除評論時更新文章評論計數
-// 修改：監聽 findOneAndDelete 而不是 remove
+// Update post comment count when deleting comments
+// Note: listen to findOneAndDelete instead of remove
 commentSchema.post('findOneAndDelete', async function(doc) { 
-  // doc 是被刪除的文檔
+  // doc is the deleted document
   if (doc) {
     const Post = mongoose.model('Post');
     try {
@@ -63,7 +63,7 @@ commentSchema.post('findOneAndDelete', async function(doc) {
       console.log(`[Comment Model Hook] Updated comment count for post ${doc.postId} to ${commentCount} after comment deletion.`);
     } catch (error) {
       console.error(`[Comment Model Hook] Error updating comment count for post ${doc.postId} after deletion:`, error);
-      // 即使這裡出錯，也不應阻止刪除操作的響應，但需要記錄錯誤
+      // Even if this fails, deletion response should not be blocked; log the error
     }
   }
 });

@@ -23,7 +23,7 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useAuth } from '../context/AuthContext';
-import { API_ENDPOINTS } from '../config/api'; // 假設 API 端點在此配置
+import { API_ENDPOINTS } from '../config/api'; // Assume API endpoints are configured here
 import PostForm from '../components/PostForm'; // Import PostForm
 
 const UserPostsPage = () => {
@@ -90,7 +90,7 @@ const UserPostsPage = () => {
   const handleDeleteConfirm = async () => {
     if (!postToDelete) return;
     try {
-      // 假設 API_ENDPOINTS.POSTS.DELETE(postId) 是刪除文章的端點
+      // Assume API_ENDPOINTS.POSTS.DELETE(postId) is the delete endpoint
       await axios.delete(API_ENDPOINTS.POSTS.DELETE(postToDelete), {
         headers: {
           'Authorization': `Bearer ${token}`
@@ -121,7 +121,7 @@ const UserPostsPage = () => {
     );
   }
 
-  if (error && !posts.length) { // 只在沒有文章可顯示時，才將錯誤訊息填滿整個頁面
+  if (error && !posts.length) { // Fill the full page with error only when there are no posts to show
     return (
       <Container sx={{ py: 4 }}>
         <Alert severity="error">{error}</Alert>
@@ -164,7 +164,7 @@ const UserPostsPage = () => {
                 <Typography variant="h5" component="h2" gutterBottom>
                   {post.title}
                 </Typography>
-                {/* 可以選擇性顯示作者，但在此頁面通常是目前使用者
+                {/* Optionally show author, but this page is usually for the current user
                 <Typography color="text.secondary" gutterBottom>
                   Author: {post.author?.username || user?.username || 'You'}
                 </Typography>

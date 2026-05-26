@@ -2,17 +2,17 @@ const jwt = require('jsonwebtoken');
 
 const auth = (req, res, next) => {
   try {
-    // 從請求頭獲取 token
+    // Get token from request header
     const token = req.header('Authorization')?.replace('Bearer ', '');
     
     if (!token) {
-      return res.status(401).json({ message: '請提供認證令牌' });
+      return res.status(401).json({ message: 'Please provide an authentication token' });
     }
 
-    // 驗證 token
+    // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
-    // 將用戶信息添加到請求對象
+    // Attach user info to request object
     req.user = {
       _id: decoded.userId,
       email: decoded.email,
@@ -22,14 +22,14 @@ const auth = (req, res, next) => {
     
     next();
   } catch (error) {
-    res.status(401).json({ message: '認證失敗' });
+    res.status(401).json({ message: 'Authentication failed' });
   }
 };
 
 // Middleware to check if user is admin
 const isAdmin = (req, res, next) => {
   if (req.user.role !== 'admin') {
-    return res.status(403).json({ message: '需要管理員權限' });
+    return res.status(403).json({ message: 'Admin privileges are required' });
   }
   next();
 };

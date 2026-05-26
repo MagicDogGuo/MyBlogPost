@@ -19,8 +19,8 @@ import {
 import {
   Email as EmailIcon,
   Person as PersonIcon,
-  Favorite as FavoriteIcon, // 用於收藏數圖標
-  VpnKey as VpnKeyIcon // 只是示例，可以換成更合適的 role 圖標
+  Favorite as FavoriteIcon, // Icon for favorites count
+  VpnKey as VpnKeyIcon // Example icon; can be replaced with a better role icon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { API_ENDPOINTS } from '../config/api';
@@ -52,7 +52,7 @@ const UserProfilePage = () => {
           setFavoritesCount(response.data.length);
         } catch (err) {
           console.error('Failed to fetch favorites count:', err);
-          // 不阻塞頁面顯示，只在控制台記錄錯誤，或顯示一個小的錯誤提示
+          // Do not block page rendering; log error or show a small warning message
           setError('Could not load favorites count.'); 
         } finally {
           setLoadingFavorites(false);
@@ -60,10 +60,10 @@ const UserProfilePage = () => {
       }
     };
 
-    if (!authLoading && user) { // 確保 auth 已加載且用戶存在
+    if (!authLoading && user) { // Ensure auth is loaded and user exists
       fetchFavorites();
-    } else if (!authLoading && !user) { // 如果 auth 加載完畢但沒有用戶
-      setLoadingFavorites(false); //不需要加載收藏
+    } else if (!authLoading && !user) { // If auth finished loading but user does not exist
+      setLoadingFavorites(false); // No need to load favorites
       setError('Please log in to view your profile.');
     }
   }, [token, user, authLoading]);
@@ -91,7 +91,7 @@ const UserProfilePage = () => {
 
   const handleEditToggle = () => {
     setEditMode(!editMode);
-    if (editMode && user) { // 從編輯模式切換回查看模式時，重置輸入框為當前用戶名
+    if (editMode && user) { // Reset input to current username when leaving edit mode
       setNewUsername(user.username);
     }
   };
@@ -121,11 +121,11 @@ const UserProfilePage = () => {
       );
       setSnackbarMessage('Username updated successfully! Page will refresh.');
       setSnackbarOpen(true);
-      // 更新 AuthContext 中的 user 狀態是一個更優雅的做法
-      // 但目前 AuthContext 未提供直接的更新方法，故採用頁面刷新
+      // Updating user state in AuthContext would be cleaner
+      // AuthContext currently has no direct update method, so page refresh is used
       setTimeout(() => {
         window.location.reload(); 
-      }, 2000); // 延遲刷新讓用戶看到消息
+      }, 2000); // Delay refresh so user can see the message
       setEditMode(false);
     } catch (err) {
       console.error('Failed to update username:', err);
@@ -136,7 +136,7 @@ const UserProfilePage = () => {
     }
   };
   
-  // 主體內容，即使收藏數還在加載也先顯示基本信息
+  // Main content: show basic profile info even while favorites are loading
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
       <Typography variant="h4" component="h1" gutterBottom>
@@ -193,7 +193,7 @@ const UserProfilePage = () => {
           <Divider component="li" />
           <ListItem>
             <ListItemIcon>
-              <VpnKeyIcon /> {/* 可以根據實際情況替換圖標 */}
+              <VpnKeyIcon /> {/* Replace with a more suitable icon if needed */}
             </ListItemIcon>
             <ListItemText primary="Role" secondary={user.role || 'N/A'} />
           </ListItem>

@@ -12,7 +12,7 @@ import UserProfilePage from './pages/UserProfilePage';
 import TagPostsPage from './pages/TagPostsPage';
 import UserPostsPage from './pages/UserPostsPage';
 
-// 受保護的路由組件
+// Protected route component
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
 
@@ -32,11 +32,11 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          {/* 公共路由 */}
+          {/* Public routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           
-          {/* 使用 Layout 的路由 */}
+          {/* Routes using Layout */}
           <Route element={<Layout />}>
             <Route path="/" element={<LandingPage />} />
             <Route
@@ -87,7 +87,7 @@ function App() {
             />
           </Route>
           
-          {/* 404 路由 */}
+          {/* 404 route */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Router>

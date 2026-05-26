@@ -4,7 +4,7 @@ const { auth } = require('../middleware/auth');
 const Comment = require('../models/Comment');
 const Post = require('../models/Post');
 
-// 獲取文章的所有評論
+// Get all comments for a post
 router.get('/post/:postId', async (req, res) => {
   try {
     const comments = await Comment.find({ 
@@ -19,15 +19,15 @@ router.get('/post/:postId', async (req, res) => {
   }
 });
 
-// 創建新評論
+// Create a new comment
 router.post('/', auth, async function(req, res) {
   try {
     const { postId, content } = req.body;
     
-    // 檢查文章是否存在
+    // Check whether the post exists
     const post = await Post.findById(postId);
     if (!post) {
-      return res.status(404).json({ message: '文章不存在' });
+      return res.status(404).json({ message: 'Post does not exist' });
     }
 
     const comment = new Comment({
@@ -46,17 +46,17 @@ router.post('/', auth, async function(req, res) {
   }
 });
 
-// 更新評論
+// Update comment
 router.put('/:id', auth, async function(req, res) {
   try {
     const comment = await Comment.findById(req.params.id);
     if (!comment) {
-      return res.status(404).json({ message: '評論不存在' });
+      return res.status(404).json({ message: 'Comment does not exist' });
     }
 
-    // 檢查權限
+    // Check permissions
     if (comment.user.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
-      return res.status(403).json({ message: '沒有權限修改此評論' });
+      return res.status(403).json({ message: 'You do not have permission to edit this comment' });
     }
 
     const { content, isPublic } = req.body;
@@ -72,33 +72,33 @@ router.put('/:id', auth, async function(req, res) {
   }
 });
 
-// 刪除評論
+// Delete comment
 router.delete('/:id', auth, async function(req, res) {
   try {
     const comment = await Comment.findById(req.params.id);
     if (!comment) {
-      return res.status(404).json({ message: '評論不存在' });
+      return res.status(404).json({ message: 'Comment does not exist' });
     }
 
-    // 檢查權限
+    // Check permissions
     if (comment.user.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
-      return res.status(403).json({ message: '沒有權限刪除此評論' });
+      return res.status(403).json({ message: 'You do not have permission to delete this comment' });
     }
 
     const deletedComment = await Comment.findByIdAndDelete(req.params.id);
 
     if (!deletedComment) {
-      return res.status(404).json({ message: '評論不存在或已被刪除' });
+      return res.status(404).json({ message: 'Comment does not exist or has already been deleted' });
     }
     
-    res.json({ message: '評論已刪除' });
+    res.json({ message: 'Comment deleted' });
   } catch (error) {
     console.error('[BACKEND ERROR - Delete Comment Route] Error deleting comment:', error); 
-    res.status(500).json({ message: error.message || '刪除評論時發生內部伺服器錯誤' });
+    res.status(500).json({ message: error.message || 'Internal server error while deleting comment' });
   }
 });
 
-// 獲取用戶的所有評論
+// Get all comments by current user
 router.get('/user', auth, async function(req, res) {
   try {
     const comments = await Comment.find({ user: req.user._id })

@@ -5,16 +5,16 @@ import {
   Chip,
   Paper
 } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom'; // 假設點擊標籤可以導航
+import { Link as RouterLink } from 'react-router-dom'; // Assume clicking a tag navigates to a route
 import './RecommendedTopics.css'; // Import the CSS file
 
-// 佔位數據
+// Placeholder data
 const placeholderTopics = [
   'Finance', 'Blockchain', 'AI', 'Business', 'Sustainability', 'Lifestyle', 'Technology', 'Environment'
 ];
 
 const RecommendedTopics = () => {
-  // 將來可以從 API 獲取數據
+  // Data can be fetched from API in the future
   const topics = placeholderTopics;
 
   return (

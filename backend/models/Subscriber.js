@@ -23,7 +23,7 @@ const subscriberSchema = new mongoose.Schema({
   }
 });
 
-// 更新 updatedAt
+// Update updatedAt
 subscriberSchema.pre('save', function(next) {
   if (this.isModified()) {
     this.updatedAt = Date.now();

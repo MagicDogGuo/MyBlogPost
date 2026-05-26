@@ -29,12 +29,12 @@ const StaffPicks = () => {
         const allPosts = response.data;
         
         if (allPosts && allPosts.length > 0) {
-          // 隨機打亂文章數組
+          // Shuffle posts randomly
           const shuffledPosts = [...allPosts].sort(() => 0.5 - Math.random());
-          // 選取前三篇，或所有文章（如果總數少於三）
+          // Take the first three posts, or all if fewer than three
           setPicks(shuffledPosts.slice(0, 3));
         } else {
-          setPicks([]); // 如果沒有文章，則 picks 為空
+          setPicks([]); // If there are no posts, picks stays empty
         }
 
       } catch (err) {

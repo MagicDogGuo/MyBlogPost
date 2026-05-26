@@ -42,14 +42,14 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-// 密碼加密
+// Hash password
 userSchema.pre('save', async function(next) {
   try {
     if (this.isModified('password')) {
       const salt = await bcrypt.genSalt(10);
       this.password = await bcrypt.hash(this.password, salt);
     }
-    // 更新 updatedAt
+    // Update updatedAt
     if (this.isModified()) {
       this.updatedAt = Date.now();
     }
@@ -59,7 +59,7 @@ userSchema.pre('save', async function(next) {
   }
 });
 
-// 密碼比較方法
+// Password comparison method
 userSchema.methods.comparePassword = async function(candidatePassword) {
   try {
     return await bcrypt.compare(candidatePassword, this.password);

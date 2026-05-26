@@ -5,23 +5,23 @@ const Post = require('../models/Post');
 const { auth, isAdmin } = require('../middleware/auth');
 const User = require('../models/User');
 
-// 驗證中間件
+// Authentication middleware
 const authMiddleware = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
-      return res.status(401).json({ message: '未授權' });
+      return res.status(401).json({ message: 'Unauthorized' });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
     next();
   } catch (error) {
-    res.status(401).json({ message: '未授權' });
+    res.status(401).json({ message: 'Unauthorized' });
   }
 };
 
-// 獲取所有文章
+// Get all posts
 router.get('/', async (req, res) => {
   try {
     const posts = await Post.find()
@@ -33,7 +33,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// 獲取單篇文章
+// Get a single post
 router.get('/:id', async (req, res) => {
   try {
     const post = await Post.findById(req.params.id)
@@ -41,7 +41,7 @@ router.get('/:id', async (req, res) => {
       .populate('likes.user', 'username');
     
     if (!post) {
-      return res.status(404).json({ message: '文章不存在' });
+      return res.status(404).json({ message: 'Post does not exist' });
     }
     
     res.json(post);
@@ -50,7 +50,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// 創建文章
+// Create post
 router.post('/', auth, async (req, res) => {
   try {
     const { title, content, imageUrl, tags } = req.body;
@@ -69,18 +69,18 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
-// 更新文章
+// Update post
 router.put('/:id', auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     
     if (!post) {
-      return res.status(404).json({ message: '文章不存在' });
+      return res.status(404).json({ message: 'Post does not exist' });
     }
 
     // Check if the user is the author or an admin
     if (post.author.toString() !== req.user._id && req.user.role !== 'admin') {
-      return res.status(403).json({ message: '沒有權限修改此文章' });
+      return res.status(403).json({ message: 'You do not have permission to edit this post' });
     }
 
     const { title, content, imageUrl, tags } = req.body;
@@ -97,59 +97,59 @@ router.put('/:id', auth, async (req, res) => {
   }
 });
 
-// 刪除文章
+// Delete post
 router.delete('/:id', auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) {
-      return res.status(404).json({ message: '文章不存在' });
+      return res.status(404).json({ message: 'Post does not exist' });
     }
 
     // Check if the user is the author or an admin
     if (post.author.toString() !== req.user._id && req.user.role !== 'admin') {
-      return res.status(403).json({ message: '沒有權限刪除此文章' });
+      return res.status(403).json({ message: 'You do not have permission to delete this post' });
     }
 
     await post.deleteOne();
-    res.json({ message: '文章已刪除' });
+    res.json({ message: 'Post deleted' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-// 收藏/取消收藏文章
+// Favorite/unfavorite post
 router.post('/:id/favorite', auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) {
-      return res.status(404).json({ message: '文章不存在' });
+      return res.status(404).json({ message: 'Post does not exist' });
     }
 
     const user = await User.findById(req.user._id);
     const favoriteIndex = user.favorites.indexOf(post._id);
 
     if (favoriteIndex === -1) {
-      // 收藏文章
+      // Favorite post
       user.favorites.push(post._id);
       await user.save();
-      res.json({ message: '文章已收藏' });
+      res.json({ message: 'Post favorited' });
     } else {
-      // 取消收藏
+      // Remove from favorites
       user.favorites.splice(favoriteIndex, 1);
       await user.save();
-      res.json({ message: '已取消收藏' });
+      res.json({ message: 'Favorite removed' });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-// 按讚/取消按讚
+// Like/unlike post
 router.post('/:id/like', auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) {
-      return res.status(404).json({ message: '文章不存在' });
+      return res.status(404).json({ message: 'Post does not exist' });
     }
 
     const likeIndex = post.likes.findIndex(
@@ -157,35 +157,35 @@ router.post('/:id/like', auth, async (req, res) => {
     );
 
     if (likeIndex === -1) {
-      // 按讚
+      // Like
       post.likes.push({ user: req.user._id });
       await post.save();
-      res.json({ message: '已按讚' });
+      res.json({ message: 'Post liked' });
     } else {
-      // 取消按讚
+      // Unlike
       post.likes.splice(likeIndex, 1);
       await post.save();
-      res.json({ message: '已取消按讚' });
+      res.json({ message: 'Like removed' });
     }
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-// GET 獲取當前用戶點讚 (收藏) 的所有帖子
+// GET all posts liked (favorited) by current user
 router.get('/me/favorites', auth, async (req, res) => {
   try {
-    // req.user._id 應該由 auth 中間件從 token 解析後設置
+    // req.user._id should be set by auth middleware after token parsing
     const userId = req.user._id; 
 
     if (!userId) {
       return res.status(401).json({ message: 'User not authorized or user ID is invalid' });
     }
 
-    // 查找所有 likes 數組中其 'user' 字段等於 userId 的帖子
+    // Find all posts where likes[].user equals userId
     const favoritePosts = await Post.find({ 'likes.user': userId })
-                                    .populate('author', 'username email') // 填充作者的用戶名和郵箱
-                                    .sort({ createdAt: -1 });     // 按創建時間降序排列
+                                    .populate('author', 'username email') // Populate author's username and email
+                                    .sort({ createdAt: -1 });     // Sort by creation time descending
 
     res.json(favoritePosts);
   } catch (error) {
@@ -194,18 +194,18 @@ router.get('/me/favorites', auth, async (req, res) => {
   }
 });
 
-// GET 獲取當前用戶發布的所有文章
+// GET all posts published by current user
 router.get('/me/myposts', auth, async (req, res) => {
   try {
-    const userId = req.user._id; // 從 auth 中間件獲取用戶 ID
+    const userId = req.user._id; // Get user ID from auth middleware
 
     if (!userId) {
       return res.status(401).json({ message: 'User not authorized or user ID is invalid' });
     }
 
     const userPosts = await Post.find({ author: userId })
-                                .populate('author', 'username email') // 填充作者信息
-                                .sort({ createdAt: -1 });     // 按創建時間降序排列
+                                .populate('author', 'username email') // Populate author info
+                                .sort({ createdAt: -1 });     // Sort by creation time descending
 
     res.json(userPosts);
   } catch (error) {
@@ -214,20 +214,20 @@ router.get('/me/myposts', auth, async (req, res) => {
   }
 });
 
-// 新增：根據標籤名稱獲取文章
+// New: get posts by tag name
 router.get('/tag/:tagName', async (req, res) => {
   try {
     const tagName = req.params.tagName;
-    // 查找 tags 數組中包含 tagName 的文章
-    // 假設 tagName 在數據庫中存儲時與傳入的大小寫一致
+    // Find posts whose tags array contains tagName
+    // Assumes stored tagName casing matches the incoming value
     const posts = await Post.find({ tags: tagName })
       .populate('author', 'username')
       .sort({ createdAt: -1 });
 
     if (!posts || posts.length === 0) {
-      // 雖然找不到文章不算嚴格意義上的錯誤，但可以返回空數組或特定消息
+      // No posts is not strictly an error; return empty array or a custom message
       // return res.status(404).json({ message: `No posts found with tag: ${tagName}` });
-      return res.json([]); // 直接返回空數組更常見
+      return res.json([]); // Returning an empty array is more common
     }
 
     res.json(posts);
@@ -237,13 +237,13 @@ router.get('/tag/:tagName', async (req, res) => {
   }
 });
 
-// 新增：獲取所有唯一的標籤
+// New: get all unique tags
 router.get('/tags/unique', async (req, res) => {
   try {
     const uniqueTags = await Post.distinct('tags');
-    // distinct() 返回一個包含所有不重複標籤的數組
-    // 例如: ["Tech", "Health", "AI", "Science"]
-    res.json(uniqueTags.sort()); // 按字母順序排序返回
+    // distinct() returns an array of all unique tags
+    // Example: ["Tech", "Health", "AI", "Science"]
+    res.json(uniqueTags.sort()); // Return sorted alphabetically
   } catch (error) {
     console.error('Error fetching unique tags:', error);
     res.status(500).json({ message: 'Failed to fetch unique tags. Please try again later.' });

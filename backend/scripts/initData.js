@@ -5,7 +5,7 @@ const User = require('../models/User');
 const Post = require('../models/Post');
 const Comment = require('../models/Comment');
 
-// 預設管理員用戶
+// Default admin user 
 const defaultAdmin = {
   username: 'Sam',
   email: 'admin@example.com',
@@ -15,7 +15,7 @@ const defaultAdmin = {
   createdAt: new Date()
 };
 
-// 預設一般用戶
+// Default regular user
 const defaultUser = {
   username: 'John Chen',
   email: 'user@example.com',
@@ -25,7 +25,7 @@ const defaultUser = {
   createdAt: new Date()
 };
 
-// 預設文章
+// Default posts
 const defaultPosts = [
   {
     title: "The Rise of Decentralized Finance",
@@ -91,19 +91,19 @@ const defaultPosts = [
 
 async function initData() {
   try {
-    console.log('開始初始化數據...');
+    console.log('Starting data initialization...');
     console.log('MongoDB URI:', process.env.MONGODB_URI);
     
     let adminUser;
     
-    // 檢查是否已有管理員用戶
-    console.log('檢查管理員用戶...');
+    // Check whether an admin user already exists
+    console.log('Checking admin user...');
     const existingAdmin = await User.findOne({ email: defaultAdmin.email });
-    console.log('現有管理員用戶:', existingAdmin ? '存在' : '不存在');
+    console.log('Existing admin user:', existingAdmin ? 'exists' : 'does not exist');
     
     if (!existingAdmin) {
-      console.log('創建新管理員用戶...');
-      // 創建管理員用戶
+      console.log('Creating new admin user...');
+      // Create admin user
       adminUser = new User({
         username: defaultAdmin.username,
         email: defaultAdmin.email,
@@ -113,7 +113,7 @@ async function initData() {
         createdAt: defaultAdmin.createdAt
       });
       await adminUser.save();
-      console.log('管理員用戶創建成功:', {
+      console.log('Admin user created successfully:', {
         id: adminUser._id,
         username: adminUser.username,
         role: adminUser.role,
@@ -122,68 +122,68 @@ async function initData() {
     } else {
       adminUser = existingAdmin;
       if (adminUser.username !== defaultAdmin.username) {
-        console.log(`更新現有管理員 ${adminUser.username} 的用戶名為 ${defaultAdmin.username}...`);
+        console.log(`Updating existing admin username from ${adminUser.username} to ${defaultAdmin.username}...`);
         adminUser.username = defaultAdmin.username;
         await adminUser.save();
-        console.log('管理員用戶名更新成功。');
+        console.log('Admin username updated successfully.');
       }
-      console.log('使用現有管理員用戶:', {
+      console.log('Using existing admin user:', {
         id: adminUser._id,
         username: adminUser.username,
         role: adminUser.role
       });
     }
 
-    // 創建或獲取一般用戶 (留言者)
+    // Create or fetch a regular user (commenter)
     let commentingUser;
-    console.log('檢查一般用戶 (留言者)...');
+    console.log('Checking regular user (commenter)...');
     const existingCommentingUser = await User.findOne({ email: defaultUser.email });
     if (!existingCommentingUser) {
-      console.log('創建新一般用戶 (留言者)...');
+      console.log('Creating new regular user (commenter)...');
       commentingUser = new User({
         username: defaultUser.username,
         email: defaultUser.email,
-        password: defaultUser.password, // 密碼會自動哈希
+        password: defaultUser.password, // Password will be hashed automatically
         role: defaultUser.role,
         donateuser: defaultUser.donateuser,
         createdAt: defaultUser.createdAt
       });
       await commentingUser.save();
-      console.log('一般用戶 (留言者) 創建成功:', { id: commentingUser._id, username: commentingUser.username });
+      console.log('Regular user (commenter) created successfully:', { id: commentingUser._id, username: commentingUser.username });
     } else {
       commentingUser = existingCommentingUser;
-      console.log('使用現有一般用戶 (留言者):', { id: commentingUser._id, username: commentingUser.username });
+      console.log('Using existing regular user (commenter):', { id: commentingUser._id, username: commentingUser.username });
     }
 
-    // 刪除所有現有文章並重新創建
-    console.log('清理現有文章...');
+    // Remove all existing posts and recreate them
+    console.log('Clearing existing posts...');
     await Post.deleteMany({});
-    console.log('現有文章已清理');
+    console.log('Existing posts cleared');
 
-    // 創建新文章
-    console.log('開始創建新文章...');
-    const createdPosts = []; // 用於存儲已創建的文章
+    // Create new posts
+    console.log('Starting post creation...');
+    const createdPosts = []; // Store created posts
     for (const postData of defaultPosts) {
       const post = new Post({
         ...postData,
-        author: adminUser._id, // 所有文章由管理員創建
+        author: adminUser._id, // All posts are created by the admin
         createdAt: new Date(),
         updatedAt: new Date()
       });
       await post.save();
-      createdPosts.push(post); // 將創建的文章添加到列表中
-      console.log(`文章創建成功: ${post.title} (ID: ${post._id})`);
+      createdPosts.push(post); // Add created post to the list
+      console.log(`Post created successfully: ${post.title} (ID: ${post._id})`);
     }
-    console.log(`${createdPosts.length} 篇文章創建完畢。`);
+    console.log(`${createdPosts.length} posts created.`);
 
-    // 清理現有評論 (可選，但為了保持初始化的一致性推薦添加)
-    console.log('清理現有評論...');
+    // Clear existing comments (optional but recommended for consistent initialization)
+    console.log('Clearing existing comments...');
     await Comment.deleteMany({});
-    console.log('現有評論已清理');
+    console.log('Existing comments cleared');
 
-    // 為隨機5篇文章添加評論 (如果文章和用戶存在)
+    // Add comments to 5 random posts (if posts and user exist)
     if (commentingUser && createdPosts.length > 0) {
-      console.log(`開始為 ${commentingUser.username} 添加評論...`);
+      console.log(`Starting to add comments for ${commentingUser.username}...`);
       const postsToCommentOn = [...createdPosts].sort(() => 0.5 - Math.random()).slice(0, 5);
       let commentsAddedCount = 0;
 
@@ -207,46 +207,46 @@ async function initData() {
             postId: post._id,
             user: commentingUser._id,
             content: randomCommentContent,
-            isPublic: true, // 確保評論公開
+            isPublic: true, // Ensure comment is public
             createdAt: new Date()
           });
           await newComment.save();
           commentsAddedCount++;
-          console.log(`為文章 "${post.title}" 添加了評論: "${randomCommentContent}"`);
+          console.log(`Added comment to post "${post.title}": "${randomCommentContent}"`);
         }
-        console.log(`${commentingUser.username} 成功添加了 ${commentsAddedCount} 條評論。`);
+        console.log(`${commentingUser.username} successfully added ${commentsAddedCount} comments.`);
       } else {
-        console.log('沒有足夠的文章來添加評論。');
+        console.log('Not enough posts available to add comments.');
       }
     } else {
-      if (!commentingUser) console.log('留言用戶不存在，跳過添加評論。');
-      if (createdPosts.length === 0) console.log('沒有文章可供評論，跳過添加評論。');
+      if (!commentingUser) console.log('Commenting user does not exist, skipping comment creation.');
+      if (createdPosts.length === 0) console.log('No posts available for comments, skipping comment creation.');
     }
 
-    console.log('數據初始化完成');
+    console.log('Data initialization completed');
   } catch (error) {
-    console.error('初始化過程中出錯:', error);
+    console.error('Error during initialization:', error);
     throw error;
   }
 }
 
-// 如果這個文件被直接運行（而不是被導入），則執行初始化
+// Run initialization when this file is executed directly (not imported)
 if (require.main === module) {
-  // 如果是直接運行，需要先連接數據庫
-  console.log('正在連接 MongoDB...');
+  // When running directly, connect to database first
+  console.log('Connecting to MongoDB...');
   mongoose.connect(process.env.MONGODB_URI)
     .then(async () => {
-      console.log('MongoDB 連接成功');
+      console.log('MongoDB connected successfully');
       await initData();
-      // 只有在直接運行時才斷開連接
+      // Disconnect only when running directly
       await mongoose.disconnect();
-      console.log('MongoDB 連接已斷開');
+      console.log('MongoDB disconnected');
     })
     .catch(error => {
-      console.error('MongoDB 連接失敗:', error);
+      console.error('MongoDB connection failed:', error);
       process.exit(1);
     });
 }
 
-// 導出初始化函數，以便可以在 app.js 中使用
+// Export initializer so it can be used in app.js
 module.exports = initData; 
