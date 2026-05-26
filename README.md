@@ -8,6 +8,19 @@ Users can enjoy a seamless reading experience, save their favorite articles, man
 
 *   **Demo URL:** [https://myblogpost-frontend-static-site.onrender.com/](https://myblogpost-frontend-static-site.onrender.com/)
 
+### Default Users
+
+Use these accounts to try the demo (created when the app runs `backend/scripts/initData.js` on startup):
+
+1.  **Admin User**
+    *   Email: `admin@example.com`
+    *   Password: `admin123`
+    *   Role: `admin`
+
+2.  **Regular User**
+    *   Email: `user@example.com`
+    *   Password: `user123`
+    *   Role: `user`
 
 ![Wordwalker Screenshot](assets/A.png) 
 
@@ -266,24 +279,6 @@ wordwalker/
 
 ### AI Image Generation
 *   `POST /api/ai/generate-image` - Generate an image based on a prompt and upload to Imgur (Token required)
-
-
-## Default Users
-
-The application may include default users if initialized via the `backend/scripts/initData.js` script:
-
-1.  **Admin User**
-    *   Email: `admin@example.com`
-    *   Password: `admin123`
-    *   Role: `admin`
-
-2.  **Regular User**
-    *   Email: `user@example.com`
-    *   Password: `user123`
-    *   Role: `user`
-
-
-
 
 ## License
 
