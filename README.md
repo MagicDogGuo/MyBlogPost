@@ -4,7 +4,7 @@
 
 Users can enjoy a seamless reading experience, save their favorite articles, manage their profiles, and publish their own posts. 
 
-## 🌐 Live Demo
+## Live Demo
 
 *   **Demo URL:** [https://myblogpost-frontend-static-site.onrender.com/](https://myblogpost-frontend-static-site.onrender.com/)
 
@@ -17,7 +17,7 @@ Users can enjoy a seamless reading experience, save their favorite articles, man
 
 ![Wordwalker Screenshot4](assets/H.png) 
 
-## ✨ Key Features
+## Key Features
 
 *   **User Authentication & Authorization:**
     *   Secure user registration and login using JSON Web Tokens (JWT).
@@ -39,7 +39,7 @@ Users can enjoy a seamless reading experience, save their favorite articles, man
     *   **Responsive Design:** Optimized for a seamless experience across desktops, tablets, and mobile devices.
     *   **Modern UI:** Clean and intuitive user interface built with Material UI.
 
-## 🚀 Technology Stack
+## Technology Stack
 
 *   **Frontend:**
     *   React (v18+)
@@ -60,9 +60,90 @@ Users can enjoy a seamless reading experience, save their favorite articles, man
     *   OpenAI DALL-E API for AI image generation.
     *   Imgur API for image hosting and storage.
 
+## System Overview
 
+High-level view of how the browser, frontend, backend, database, and external services connect.
 
-## 🛠️ Prerequisites
+```mermaid
+flowchart TB
+    subgraph Client["User Browser"]
+        UI["React SPA<br/>Material UI + React Router"]
+        LS["localStorage<br/>JWT token"]
+        CTX["AuthContext<br/>Global auth state"]
+        UI --> CTX
+        CTX --> LS
+    end
+
+    subgraph Frontend["Frontend (port 3000)"]
+        Pages["Pages<br/>FavoritePosts / UserPosts / TagPosts / Profile"]
+        Comps["Components<br/>Login / Posts / PostDetail / CommentList..."]
+        API_CFG["config/api.js<br/>API_ENDPOINTS"]
+        Pages --> Comps
+        Comps --> API_CFG
+    end
+
+    subgraph Backend["Backend Express (port 5000)"]
+        APP["app.js<br/>CORS + JSON + Routes"]
+        MW["middleware/auth.js<br/>JWT verify + isAdmin"]
+        ROUTES["Routes"]
+        MODELS["Mongoose Models"]
+        INIT["scripts/initData.js"]
+        APP --> MW
+        APP --> ROUTES
+        ROUTES --> MODELS
+        APP --> INIT
+    end
+
+    subgraph DB["Database"]
+        MONGO[("MongoDB<br/>User / Post / Comment / Subscriber")]
+    end
+
+    subgraph External["External Services"]
+        OPENAI["OpenAI DALL-E API"]
+        IMGUR["Imgur API"]
+    end
+
+    UI -->|"Axios + Bearer Token"| APP
+    ROUTES --> MONGO
+    ROUTES -->|"AI image gen"| OPENAI
+    ROUTES -->|"Image upload"| IMGUR
+    INIT --> MONGO
+```
+
+### Layers
+
+| Layer | Technology | Responsibility |
+|-------|------------|----------------|
+| **Client** | React SPA + AuthContext + localStorage | UI, routing, JWT persistence in the browser |
+| **Frontend** | React, MUI, Axios, `config/api.js` | Pages/components; calls backend with `Authorization: Bearer <token>` |
+| **Backend** | Express, Mongoose, JWT middleware | REST API, auth, business logic, secrets (API keys) |
+| **Database** | MongoDB | Users, posts, comments, subscribers |
+| **External** | OpenAI + Imgur | AI featured images; permanent image URLs on posts |
+
+### Request Flow Examples
+
+**Login**
+
+```
+Browser → POST /api/auth/login → verify password (bcrypt) → JWT → localStorage + AuthContext
+```
+
+**Read a post**
+
+```
+Browser → GET /api/posts/:id → Express → Mongoose → MongoDB → JSON → React (PostDetail)
+```
+
+**Create post with AI image (authenticated)**
+
+```
+Browser (JWT) → POST /api/ai/generate-image → OpenAI → download → Imgur → imageUrl
+Browser (JWT) → POST /api/posts { title, content, imageUrl } → save to MongoDB
+```
+
+The browser never talks to MongoDB or external APIs directly; only the Express server does, keeping credentials on the server.
+
+## Prerequisites
 
 Before you begin, ensure you have the following installed:
 
@@ -70,7 +151,7 @@ Before you begin, ensure you have the following installed:
 *   npm (comes with Node.js) or yarn
 *   MongoDB (if running a local database instance)
 
-## ⚙️ Installation & Setup
+## Installation & Setup
 
 1.  **Clone the Repository:**
     ```bash
@@ -114,7 +195,7 @@ Before you begin, ensure you have the following installed:
         REACT_APP_API_URL=http://localhost:5000/api # Base URL for your backend API
         ```
 
-## ▶️ Running the Application
+## Running the Application
 
 1.  **Start the Backend Server:**
     ```bash
@@ -131,7 +212,7 @@ Before you begin, ensure you have the following installed:
     ```
     The frontend application will run on `http://localhost:3000` and should open automatically in your browser.
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 wordwalker/
@@ -160,7 +241,7 @@ wordwalker/
 └── README.md
 ```
 
-## 🗺️ API Endpoints (Key Functionalities)
+## API Endpoints (Key Functionalities)
 
 ### Authentication (Auth)
 *   `POST /api/auth/register` - Register a new user
@@ -187,7 +268,7 @@ wordwalker/
 *   `POST /api/ai/generate-image` - Generate an image based on a prompt and upload to Imgur (Token required)
 
 
-## 👤 Default Users
+## Default Users
 
 The application may include default users if initialized via the `backend/scripts/initData.js` script:
 
@@ -204,7 +285,7 @@ The application may include default users if initialized via the `backend/script
 
 
 
-## 📜 License
+## License
 
 This project is licensed under the MIT License - see the `LICENSE` file for details.
 
