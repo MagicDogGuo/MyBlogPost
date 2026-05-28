@@ -158,6 +158,37 @@ Browser (JWT) → POST /api/posts { title, content, imageUrl } → save to Mongo
 
 The browser never talks to MongoDB or external APIs directly; only the Express server does, keeping credentials on the server.
 
+### AI Image Generation Flow
+
+This sequence shows how a user generates an AI featured image and how the backend handles the Imgur fallback.
+
+```mermaid
+sequenceDiagram
+    actor U as User
+    participant FE as Frontend (PostForm)
+    participant API as Backend /api/ai/generate-image
+    participant AUTH as auth middleware
+    participant OAI as OpenAI Images API
+    participant IMG as Imgur API
+
+    U->>FE: Click "Generate AI Image"
+    FE->>API: POST prompt + Bearer token
+    API->>AUTH: Verify JWT
+    AUTH-->>API: req.user
+
+    API->>OAI: Generate image from prompt
+    OAI-->>API: Temporary image URL
+    API->>API: Download image to buffer
+    API->>IMG: Upload buffer
+
+    alt Imgur upload success
+        IMG-->>API: Persistent image URL
+        API-->>FE: 200 { imageUrl }
+    else Imgur upload failure
+        API-->>FE: 200 { imageUrl: openaiUrl, warning }
+    end
+```
+
 ### Architecture Docs
 
 - See [`docs/architecture/README.md`](docs/architecture/README.md) for system overview and frontend/backend architecture diagrams.
